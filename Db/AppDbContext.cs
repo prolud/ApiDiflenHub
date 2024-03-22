@@ -1,4 +1,4 @@
-﻿using ApiDiflenStore.Models;
+﻿using ApiDiflenStore.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel;

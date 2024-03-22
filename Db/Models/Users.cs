@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ApiDiflenStore.Models
+namespace ApiDiflenStore.Db.Models
 {
     [Table("users")]
     public class Users
