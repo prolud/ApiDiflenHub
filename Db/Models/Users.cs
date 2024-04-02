@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ApiDiflenStore.Enum;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ApiDiflenStore.Db.Models
 {
-    [Table("users")]
+    [Table("Users")]
     public class Users
     {
         [Key]
