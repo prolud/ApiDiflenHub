@@ -28,4 +28,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .WithOrigins("https://localhost:5173"));
+
 app.Run();
