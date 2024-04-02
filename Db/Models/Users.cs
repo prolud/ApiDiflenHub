@@ -7,10 +7,11 @@ namespace ApiDiflenStore.Db.Models
     public class Users
     {
         [Key]
-        public int Id { get; set; }
+        public int IdUsers { get; set; }
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public int UserLevel { get; set; }
+        public UserRolesEnum.IdEnum IdUserRoles { get; set; }
+        public bool IsLogged { get; set; }
         public DateTime CreationDate { get; set; }
     }
 }
