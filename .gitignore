@@ -1,9 +1,5 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-.vs
+﻿.vs
+/DbContext/obj/
 /DbContext/obj/
 /ApiDiflenHub/bin/
-/ApiDiflenHub/obj/Debug/net6.0/ApiDiflenHub.AssemblyInfo.cs
-/ApiDiflenHub/obj/Debug/net6.0/ApiDiflenHub.AssemblyInfoInputs.cache
+/ApiDiflenHub/obj/
