@@ -31,3 +31,7 @@
 /DbContext/obj/DbContext.csproj.nuget.g.props
 /DbContext/obj/DbContext.csproj.nuget.g.targets
 /DbContext/bin/Debug/net6.0/DbContext.deps.json
+/ApiDiflenHub/.config/dotnet-tools.json
+/ApiDiflenHub/ApiDiflenHub.csproj.user
+/ApiDiflenHub/Properties/PublishProfiles/FolderProfile.pubxml
+/ApiDiflenHub/Properties/PublishProfiles/FolderProfile.pubxml.user
