@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DbContext;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApiDiflenStore.Controllers
 {
-    public class LogginRequestBody
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
     [Route("api/users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly Class1 _class1;
+
+        public UsersController(Class1 class1)
+        {
+            _class1 = class1;
+        }
+
         [HttpGet("say-hello")]
         public IActionResult SayHello()
         {
-            return Ok("Hello, World!");
+            return Ok(_class1.ReturnHello());
         }
     }
 }
