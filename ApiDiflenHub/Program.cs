@@ -1,4 +1,5 @@
-using DbContext;
+using Database;
+using Database.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<Class1>();
+builder.Services.AddScoped<AppDbContext>();
+builder.Services.AddScoped<Categorie>();
 
 var app = builder.Build();
 

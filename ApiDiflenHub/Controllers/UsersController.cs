@@ -1,5 +1,7 @@
-﻿using DbContext;
+﻿using Database;
+using Database.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiDiflenStore.Controllers
 {
@@ -7,17 +9,14 @@ namespace ApiDiflenStore.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly Class1 _class1;
-
-        public UsersController(Class1 class1)
-        {
-            _class1 = class1;
-        }
-
         [HttpGet("say-hello")]
-        public IActionResult SayHello()
+        public ActionResult<List<Categorie>> SayHello([FromServices] AppDbContext appDbContext)
         {
-            return Ok(_class1.ReturnHello());
+            var categories = appDbContext.Categorie
+                .AsNoTracking()
+                .ToList();
+
+            return Ok(categories);
         }
     }
 }
