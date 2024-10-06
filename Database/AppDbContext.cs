@@ -9,8 +9,9 @@ namespace Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dbPath = Path.Combine(Directory.GetCurrentDirectory(), @"..\Database\app.db");
-            optionsBuilder.UseSqlite($"DataSource={dbPath};Cache=Shared");
+            var connectionString = "server=diflenhub.c744aq6g8sao.sa-east-1.rds.amazonaws.com;port=3306;database=diflenhub_dev;user=admin;password=7Perfilanonimo";
+
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }
 }
