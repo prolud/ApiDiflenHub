@@ -8,6 +8,20 @@ namespace API
 {
     public static class Startup
     {
+        public static void AddCors(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+        }
+
         public static void SetImplementations(IServiceCollection services)
         {
             services.AddScoped<AppDbContext>();
@@ -37,6 +51,11 @@ namespace API
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+        }
+
+        public static void ConfigureCors(WebApplication app)
+        {
+            app.UseCors("AllowFrontend");
         }
     }
 }

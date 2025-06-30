@@ -1,6 +1,5 @@
 ﻿using Application.UseCases;
 using Domain.Models;
-using Infra;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiDiflenStore.Controllers
