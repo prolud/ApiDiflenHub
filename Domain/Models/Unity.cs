@@ -1,0 +1,12 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Domain.Models
+{
+    public class Unity
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        
+        public ICollection<Lesson> Lessons { get; set; }
+    }
+}
