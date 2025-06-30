@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/lucas-aguiar/Documents/repos/GitHub/ApiDiflenHub/Database/Database.csproj": {}
+  },
+  "projects": {
+    "/home/lucas-aguiar/Documents/repos/GitHub/ApiDiflenHub/Database/Database.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/lucas-aguiar/Documents/repos/GitHub/ApiDiflenHub/Database/Database.csproj",
+        "projectName": "Database",
+        "projectPath": "/home/lucas-aguiar/Documents/repos/GitHub/ApiDiflenHub/Database/Database.csproj",
+        "packagesPath": "/home/lucas-aguiar/.nuget/packages/",
+        "outputPath": "/home/lucas-aguiar/Documents/repos/GitHub/ApiDiflenHub/Database/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/lucas-aguiar/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/lucas-aguiar/.dotnet/sdk/9.0.301/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
