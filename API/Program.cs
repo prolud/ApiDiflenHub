@@ -11,5 +11,6 @@ var app = builder.Build();
 Startup.ConfigureScalar(app);
 Startup.ConfigureAPI(app);
 Startup.ConfigureCors(app);
+Startup.ConfigureMiddlewares(app);
 
 await app.RunAsync();

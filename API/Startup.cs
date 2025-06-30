@@ -32,9 +32,9 @@ namespace API
 
         public static void ConfigureSwagger(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddControllers();
         }
 
         public static void ConfigureScalar(WebApplication app)
@@ -56,6 +56,11 @@ namespace API
         public static void ConfigureCors(WebApplication app)
         {
             app.UseCors("AllowFrontend");
+        }
+
+        public static void ConfigureMiddlewares(WebApplication app)
+        {
+            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
