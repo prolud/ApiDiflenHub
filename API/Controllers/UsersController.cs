@@ -25,10 +25,16 @@ namespace ApiDiflenStore.Controllers
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        [HttpGet("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(User user)
         {
-            if (!await _useCase.LoginUser(user))
+            var result = await _useCase.LoginUser(user);
+            
+            if (result is null)
+            {
+                return BadRequest("Usuário não encontrado");
+            }
+            else if (result is false)
             {
                 return Unauthorized("Invalid Password");
             }
