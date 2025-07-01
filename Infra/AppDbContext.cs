@@ -7,6 +7,10 @@ namespace Infra
     public class AppDbContext(IConfiguration _configuration) : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Unity> Unities { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Alternative> Alternatives { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

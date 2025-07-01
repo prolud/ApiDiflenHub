@@ -1,6 +1,5 @@
 ﻿using API.DTOs;
 using Application.UseCases;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiDiflenStore.Controllers

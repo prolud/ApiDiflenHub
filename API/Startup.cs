@@ -8,6 +8,16 @@ namespace API
 {
     public static class Startup
     {
+        public static void IgnoreCycles(IServiceCollection services)
+        {
+            services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            });
+
+        }
+
         public static void AddCors(IServiceCollection services)
         {
             services.AddCors(options =>
@@ -27,7 +37,9 @@ namespace API
             services.AddScoped<AppDbContext>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUnityService, UnityService>();
             services.AddScoped<UsersUseCase>();
+            services.AddScoped<UnityUseCase>();
         }
 
         public static void ConfigureSwagger(IServiceCollection services)

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
+    [Table("alternatives")]
     public class Alternative
     {
         public int Id { get; set; }
