@@ -38,8 +38,10 @@ namespace API
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnityService, UnityService>();
+            services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<UsersUseCase>();
             services.AddScoped<UnityUseCase>();
+            services.AddScoped<LessonUseCase>();
         }
 
         public static void ConfigureSwagger(IServiceCollection services)

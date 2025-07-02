@@ -4,5 +4,6 @@ namespace Domain.Interfaces;
 
 public interface ILessonService
 {
-    public Task<Lesson> GetLessonsFromUnity();
+    public Task<List<Lesson>> GetLessonsFromUnityId(int unityId);
+    public Task<Lesson?> GetLessonByIdAndUnity(int unityId, int lessonId);
 }

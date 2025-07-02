@@ -11,5 +11,11 @@ namespace Infra.Services
             return await _context.Unities
                 .ToListAsync();
         }
+
+        public async Task<Unity?> GetUnityByName(string unityName)
+        {
+            return await _context.Unities
+                .FirstOrDefaultAsync(u => u.Name == unityName);
+        }
     }
 }

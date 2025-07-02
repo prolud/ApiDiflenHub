@@ -36,7 +36,7 @@ namespace ApiDiflenStore.Controllers
             }
             else if (result is false)
             {
-                return Unauthorized("Invalid Password");
+                return Unauthorized("Senha incorreta");
             }
 
             return Ok("Login completed successfully");
