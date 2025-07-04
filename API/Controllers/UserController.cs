@@ -1,5 +1,5 @@
-﻿using API.DTOs;
-using Application.UseCases;
+﻿using Application.UseCases;
+using Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiDiflenStore.Controllers
@@ -14,7 +14,7 @@ namespace ApiDiflenStore.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("register")]
-        public async Task<IActionResult> Register(RegisterDto registerDto)
+        public async Task<IActionResult> Register(RegisterDtoIn registerDto)
         {
             await _useCase.RegisterUser(registerDto.Email, registerDto.Username, registerDto.Password);
             return Ok("User created successfully!");
@@ -26,7 +26,7 @@ namespace ApiDiflenStore.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDtoIn loginDto)
         {
             var result = await _useCase.LoginUser(loginDto.Email, loginDto.Password);
             

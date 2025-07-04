@@ -9,6 +9,7 @@ public class ExceptionMiddleware(RequestDelegate _next)
     {
         try
         {
+            Thread.Sleep(1000); // Simulating a delay for demonstration purposes
             await _next(context);
         }
         catch (Exception ex)
