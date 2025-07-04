@@ -17,16 +17,16 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
-            if (answersVerifyIn.Any(a => a.AlternativeId <= 0) || answersVerifyIn.Any(a => a.QuestionId <= 0))
+            if (answersVerifyIn.Count == 0 || answersVerifyIn.Any(a => a.AlternativeId <= 0) || answersVerifyIn.Any(a => a.QuestionId <= 0))
             {
-                return BadRequest("Requisição inválida. Informe o ID da questão eo ID da alternativa.");
+                return BadRequest("Responda as questões antes de submeter ao formulário");
             }
 
             var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn);
 
             if (answersVerifyOut is null)
             {
-                return BadRequest("Não foi possível encontrar uma das alternativas de alguma questão.");
+                return BadRequest("Não foi possível encontrar uma das alternativas de alguma questão");
             }
 
             return Ok(answersVerifyOut);
