@@ -1,3 +1,4 @@
+using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
 using Domain.Models;
@@ -28,7 +29,11 @@ namespace API.Controllers
             }
             else
             {
-                return BadRequest("Endereço inválido. Informe o ID ou o nome da unidade.");
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Endereço inválido. Informe o ID ou o nome da unidade.",
+                });
             }
 
             if (lessons.Count == 0)
@@ -54,7 +59,11 @@ namespace API.Controllers
                 return Ok(lesson);
             }
 
-            return BadRequest("Endereço inválido. Informe o índice da lição e o Id da unidade.");
+            return BadRequest(new
+            {
+                HttpStatusCode.BadRequest,
+                Message = "Endereço inválido. Informe o índice da lição e o Id da unidade.",
+            });
         }
     }
 }

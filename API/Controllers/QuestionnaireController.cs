@@ -1,3 +1,4 @@
+using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +20,22 @@ namespace API.Controllers
         {
             if (answersVerifyIn.Count == 0 || answersVerifyIn.Any(a => a.AlternativeId <= 0) || answersVerifyIn.Any(a => a.QuestionId <= 0))
             {
-                return BadRequest("Responda as questões antes de submeter ao formulário");
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Responda as questões antes de submeter ao formulário",
+                });
             }
 
             var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn);
 
             if (answersVerifyOut is null)
             {
-                return BadRequest("Não foi possível encontrar uma das alternativas de alguma questão");
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Não foi possível encontrar uma das alternativas de alguma questão",
+                });
             }
 
             return Ok(answersVerifyOut);

@@ -1,4 +1,5 @@
-﻿using Application.UseCases;
+﻿using System.Net;
+using Application.UseCases;
 using Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,11 +33,19 @@ namespace ApiDiflenStore.Controllers
             
             if (result is null)
             {
-                return BadRequest("Usuário não encontrado");
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Usuário não encontrado",
+                });
             }
             else if (result is false)
             {
-                return Unauthorized("Senha incorreta");
+                return BadRequest(new
+                {
+                    HttpStatusCode.Unauthorized,
+                    Message = "Senha incorreta",
+                });
             }
 
             return Ok("Login completed successfully");

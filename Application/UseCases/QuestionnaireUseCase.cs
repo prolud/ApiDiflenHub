@@ -14,10 +14,11 @@ namespace Application.UseCases
                 var correctAlternativeId = await _alternativeService.GetCorrectAlternativeIdAsync(answerVerifyIn.QuestionId);
 
                 if (correctAlternativeId is null) return null;
-
+                
                 answersVerifyOut.Add(new AnswerVerifyOut
                 {
                     QuestionId = answerVerifyIn.QuestionId,
+                    AlternativeId = answerVerifyIn.AlternativeId,
                     IsCorrect = answerVerifyIn.AlternativeId == correctAlternativeId
                 });
             }

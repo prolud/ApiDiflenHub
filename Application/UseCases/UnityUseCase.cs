@@ -12,17 +12,31 @@ namespace Application.UseCases
             var unities = new List<UnityDtoOut>();
             var dbUnities = await _unityService.GetUnities();
 
-        foreach (var unity in dbUnities)
-        {
-            unities.Add(new UnityDtoOut()
+            foreach (var unity in dbUnities)
             {
-                Id = unity.Id,
-                Name = unity.Name,
-                Description = unity.Description
-            });
+                unities.Add(new UnityDtoOut()
+                {
+                    Id = unity.Id,
+                    Name = unity.Name,
+                    Description = unity.Description
+                });
+            }
+
+            return unities;
         }
 
-        return unities;
+        public async Task<UnityDtoOut?> GetUnityFromName(string unityName)
+        {
+            var dbUnity = await _unityService.GetUnityByName(unityName);
+
+            if (dbUnity is null) return null;
+
+            return new UnityDtoOut()
+            {
+                Id = dbUnity.Id,
+                Description = dbUnity.Description,
+                Name = dbUnity.Name,
+            };
         }
     }
 }

@@ -8,7 +8,8 @@ namespace Domain.DTOs
     
     public class AnswerVerifyOut
     {
-        public int QuestionId { get; set; }
+        public required int QuestionId { get; set; }
+        public required int AlternativeId { get; set; }
         public bool IsCorrect { get; set; }
     }
 }
