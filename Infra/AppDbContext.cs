@@ -11,6 +11,8 @@ namespace Infra
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Alternative> Alternatives { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
