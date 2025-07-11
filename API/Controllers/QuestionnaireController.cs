@@ -44,6 +44,7 @@ namespace API.Controllers
         [HttpGet("get-answers")]
         public async Task<IActionResult> GetAnswers()
         {
+            await _useCase.VerifyAnswersAsync([]);
             return Ok();
         }
     }

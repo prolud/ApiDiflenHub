@@ -25,7 +25,7 @@ namespace API.Controllers
             }
             else if (!string.IsNullOrEmpty(unityName))
             {
-                lessons = await _useCase.GetLessons(unityName);
+                lessons = await _useCase.GetLessonsByUnityName(unityName);
             }
             else
             {

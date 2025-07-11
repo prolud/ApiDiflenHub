@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Domain.DTOs;
 using Domain.Interfaces;
 using Domain.Models;
@@ -26,7 +25,7 @@ public class LessonUseCase(ILessonService _lessonService, IUnityService _unitySe
         return lessons;
     }
 
-    public async Task<List<LessonDtoOut>> GetLessons(string unityName)
+    public async Task<List<LessonDtoOut>> GetLessonsByUnityName(string unityName)
     {
         var unity = await _unityService.GetUnityByName(unityName);
 
