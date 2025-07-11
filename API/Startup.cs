@@ -40,6 +40,7 @@ namespace API
             services.AddScoped<IUnityService, UnityService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IAlternativeService, AlternativeService>();
+            services.AddScoped<IAnswerService, AnswerService>();
 
             services.AddScoped<QuestionnaireUseCase>();
             services.AddScoped<UsersUseCase>();

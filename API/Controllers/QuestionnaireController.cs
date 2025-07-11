@@ -40,5 +40,11 @@ namespace API.Controllers
 
             return Ok(answersVerifyOut);
         }
+
+        [HttpGet("get-answers")]
+        public async Task<IActionResult> GetAnswers()
+        {
+            return Ok();
+        }
     }
 }
