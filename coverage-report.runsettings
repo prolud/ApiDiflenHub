@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
   <DataCollectionRunSettings>
     <DataCollectors>
-      <DataCollector friendlyName="XPlat Code Coverage">
+      <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <Format>cobertura</Format>
-          <Exclude>
-            [Domain*]*
-            *Domain*
-          </Exclude>
+          <CodeCoverage>
+            <Exclude>
+              <ModulePath>.*Domain.*</ModulePath>
+            </Exclude>
+          </CodeCoverage>
         </Configuration>
       </DataCollector>
     </DataCollectors>

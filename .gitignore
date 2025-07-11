@@ -2,4 +2,5 @@
 */bin/
 */obj/
 project-dependency-graph.dot
-coverage-report/
+coverage_report
+Tests/TestResults
