@@ -1,3 +1,4 @@
+using System.Text;
 using API.Middlewares;
 using Application.Auth;
 using Application.UseCases;
@@ -63,6 +64,8 @@ namespace API
 
         internal static void ConfigureJwt(IServiceCollection services, ConfigurationManager configuration)
         {
+            var key = configuration["JwtConfig:Key"] ?? throw new KeyNotFoundException("The environment was not prepared to set key");
+            
             services
             .AddAuthentication(o =>
             {
@@ -73,7 +76,6 @@ namespace API
             .AddJwtBearer(o =>
             {
                 o.RequireHttpsMetadata = false;
-                o.SaveToken = true;
                 o.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidIssuer = configuration["JwtConfig:Issuer"],
@@ -82,6 +84,7 @@ namespace API
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
 
@@ -111,7 +114,7 @@ namespace API
 
         internal static void ConfigureMiddlewares(WebApplication app)
         {
-            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ApiMiddleware>();
         }
 
         internal static void UseJwt(WebApplication app)

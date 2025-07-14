@@ -1,12 +1,13 @@
 using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
-using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/lessons")]
+    [Authorize]
     public class LessonController(LessonUseCase _useCase) : ControllerBase
     {
         /// <summary>

@@ -3,13 +3,12 @@ using System.Text.Json;
 
 namespace API.Middlewares
 {
-    public class ExceptionMiddleware(RequestDelegate _next)
+    public class ApiMiddleware(RequestDelegate _next)
     {
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                Thread.Sleep(1000); // Simulating a delay for demonstration purposes
                 await _next(context);
             }
             catch (Exception ex)

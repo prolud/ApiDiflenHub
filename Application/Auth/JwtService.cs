@@ -12,7 +12,7 @@ namespace Application.Auth
     {
         public string GenerateBearerToken(User user)
         {
-            var key = _configuration["JwtConfig:Key"] ?? throw new KeyNotFoundException("The environment was not prepared to set key");
+            var key = _configuration["JwtConfig:Key"]!;
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -25,7 +25,10 @@ namespace Application.Auth
                 Expires = GetExpirationDate(),
                 Issuer = _configuration["JwtConfig:Issuer"],
                 Audience = _configuration["JwtConfig:Audience"],
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha512Signature)
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                    SecurityAlgorithms.HmacSha256Signature
+                    )
             };
 
 

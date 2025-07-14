@@ -1,9 +1,11 @@
 using Application.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Route("api/unity")]
+[Authorize]
 public class UnityController(UnityUseCase _unityUseCase) : ControllerBase
 {
     [HttpGet("get-all")]

@@ -1,11 +1,13 @@
 using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/questionnaire")]
+    [Authorize]
     public class QuestionnaireController(QuestionnaireUseCase _useCase) : ControllerBase
     {
         /// <summary>
