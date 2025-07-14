@@ -3,11 +3,11 @@ using Application.UseCases;
 using Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiDiflenStore.Controllers
+namespace API.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class UsersController(UsersUseCase _useCase) : ControllerBase
+    public class UsersController(UserUseCase _useCase) : ControllerBase
     {
         /// <summary>
         /// Register
@@ -39,16 +39,16 @@ namespace ApiDiflenStore.Controllers
                     Message = "Usuário não encontrado",
                 });
             }
-            else if (result is false)
+            else if (!result.IsLogged)
             {
-                return BadRequest(new
+                return Unauthorized(new
                 {
                     HttpStatusCode.Unauthorized,
                     Message = "Senha incorreta",
                 });
             }
 
-            return Ok("Login completed successfully");
+            return Ok(result);
         }
     }
 }

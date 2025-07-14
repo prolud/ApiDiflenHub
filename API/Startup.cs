@@ -1,14 +1,18 @@
+using API.Middlewares;
+using Application.Auth;
 using Application.UseCases;
 using Domain.Interfaces;
 using Infra;
 using Infra.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 namespace API
 {
-    public static class Startup
+    internal static class Startup
     {
-        public static void IgnoreCycles(IServiceCollection services)
+        internal static void IgnoreCycles(IServiceCollection services)
         {
             services.AddControllers()
             .AddJsonOptions(options =>
@@ -18,7 +22,7 @@ namespace API
 
         }
 
-        public static void AddCors(IServiceCollection services)
+        internal static void AddCors(IServiceCollection services)
         {
             services.AddCors(options =>
             {
@@ -32,7 +36,7 @@ namespace API
             });
         }
 
-        public static void SetImplementations(IServiceCollection services)
+        internal static void SetImplementations(IServiceCollection services)
         {
             services.AddScoped<AppDbContext>();
 
@@ -43,19 +47,48 @@ namespace API
             services.AddScoped<IAnswerService, AnswerService>();
 
             services.AddScoped<QuestionnaireUseCase>();
-            services.AddScoped<UsersUseCase>();
+            services.AddScoped<UserUseCase>();
             services.AddScoped<UnityUseCase>();
             services.AddScoped<LessonUseCase>();
+
+            services.AddScoped<JwtService>();
         }
 
-        public static void ConfigureSwagger(IServiceCollection services)
+        internal static void ConfigureSwagger(IServiceCollection services)
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
 
-        public static void ConfigureScalar(WebApplication app)
+        internal static void ConfigureJwt(IServiceCollection services, ConfigurationManager configuration)
+        {
+            services
+            .AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = configuration["JwtConfig:Issuer"],
+                    ValidAudience = configuration["JwtConfig:Audience"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                };
+            });
+
+            services.AddAuthorization();
+        }
+
+        internal static void ConfigureScalar(WebApplication app)
         {
             app.UseSwagger();
             app.MapScalarApiReference(op =>
@@ -64,21 +97,27 @@ namespace API
             });
         }
 
-        public static void ConfigureAPI(WebApplication app)
+        internal static void ConfigureAPI(WebApplication app)
         {
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
         }
 
-        public static void ConfigureCors(WebApplication app)
+        internal static void ConfigureCors(WebApplication app)
         {
             app.UseCors("AllowFrontend");
         }
 
-        public static void ConfigureMiddlewares(WebApplication app)
+        internal static void ConfigureMiddlewares(WebApplication app)
         {
             app.UseMiddleware<ExceptionMiddleware>();
+        }
+
+        internal static void UseJwt(WebApplication app)
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
     }
 }
