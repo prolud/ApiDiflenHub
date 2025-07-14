@@ -20,7 +20,10 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
-            if (answersVerifyIn.Count == 0 || answersVerifyIn.Any(a => a.AlternativeId <= 0) || answersVerifyIn.Any(a => a.QuestionId <= 0))
+            if (answersVerifyIn.Count == 0 ||
+                answersVerifyIn.Any(a => a.AlternativeId <= 0) ||
+                answersVerifyIn.Any(a => a.QuestionId <= 0) ||
+                answersVerifyIn.Any(a => a.UserId == 0))
             {
                 return BadRequest(new
                 {

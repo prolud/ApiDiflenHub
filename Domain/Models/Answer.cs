@@ -9,9 +9,6 @@ namespace Domain.Models
         [Key]
         public int Id { get; set; }
 
-        [Column("question_id")]
-        public int QuestionId { get; set; }
-
         [Column("alternative_id")]
         public int AlternativeId { get; set; }
 

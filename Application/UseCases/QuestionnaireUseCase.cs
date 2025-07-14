@@ -26,7 +26,6 @@ namespace Application.UseCases
                 await _answerService.InsertAnswerAsync(new Answer
                 {
                     AlternativeId = answerVerifyIn.AlternativeId,
-                    QuestionId = answerVerifyIn.QuestionId,
                     UserId = answerVerifyIn.UserId,
                     Created = DateTime.Now,
                 });
