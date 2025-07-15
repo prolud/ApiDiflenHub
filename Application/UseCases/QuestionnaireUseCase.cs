@@ -6,7 +6,7 @@ namespace Application.UseCases
 {
     public class QuestionnaireUseCase(IAlternativeService _alternativeService, IAnswerService _answerService)
     {
-        public async Task<List<AnswerVerifyOut>?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn)
+        public async Task<List<AnswerVerifyOut>?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
         {
             List<AnswerVerifyOut> answersVerifyOut = [];
 
@@ -26,7 +26,7 @@ namespace Application.UseCases
                 await _answerService.InsertAnswerAsync(new Answer
                 {
                     AlternativeId = answerVerifyIn.AlternativeId,
-                    UserId = answerVerifyIn.UserId,
+                    UserId = int.Parse(userId),
                     Created = DateTime.Now,
                 });
             }

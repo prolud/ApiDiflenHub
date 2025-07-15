@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Claims;
 using Application.UseCases;
 using Domain.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ namespace API.Controllers
 {
     [Route("api/questionnaire")]
     [Authorize]
-    public class QuestionnaireController(QuestionnaireUseCase _useCase) : ControllerBase
+    public class QuestionnaireController(Questionnaire<UseCase _useCase) : ControllerBase
     {
         /// <summary>
         /// Veryfy answer s
@@ -20,10 +21,11 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (answersVerifyIn.Count == 0 ||
                 answersVerifyIn.Any(a => a.AlternativeId <= 0) ||
-                answersVerifyIn.Any(a => a.QuestionId <= 0) ||
-                answersVerifyIn.Any(a => a.UserId == 0))
+                answersVerifyIn.Any(a => a.QuestionId <= 0))
             {
                 return BadRequest(new
                 {
@@ -31,8 +33,9 @@ namespace API.Controllers
                     Message = "Responda as questões antes de submeter ao formulário",
                 });
             }
+            else if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn);
+            var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
 
             if (answersVerifyOut is null)
             {
@@ -46,10 +49,12 @@ namespace API.Controllers
             return Ok(answersVerifyOut);
         }
 
-        [HttpGet("get-answers")]
-        public async Task<IActionResult> GetAnswers()
+        [HttpGet("get-last-answers")]
+        public async Task<IActionResult> GetAnswers([FromQuery] string lessonId)
         {
-            await _useCase.VerifyAnswersAsync([]);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+
+            await _useCase.VerifyAnswersAsync([], userId);
             return Ok();
         }
     }

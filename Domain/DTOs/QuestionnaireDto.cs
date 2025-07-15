@@ -4,7 +4,6 @@ namespace Domain.DTOs
     {
         public int QuestionId { get; set; }
         public int AlternativeId { get; set; }
-        public int UserId { get; set; }
     }
 
     public class AnswerVerifyOut
