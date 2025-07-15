@@ -21,8 +21,11 @@ namespace Infra.Services
 
             if (existingAnswer is not null) answer.Id = existingAnswer.Id;
 
-            _context.Answers.Update(answer);
-            await _context.SaveChangesAsync();
+            if (existingAnswer is null || existingAnswer is not null && !existingAnswer.IsCorrect)
+            {
+                _context.Answers.Update(answer);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
