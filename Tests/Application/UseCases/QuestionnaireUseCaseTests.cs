@@ -8,15 +8,14 @@ namespace Tests.Application.UseCases
 {
     public class QuestionnaireUseCaseTests
     {
-        private readonly Mock<IAlternativeService> _alternativeServiceMock;
-        private readonly Mock<IAnswerService> _answerServiceMock;
+        private readonly Mock<IAlternativeService> _alternativeServiceMock = new();
+        private readonly Mock<IAnswerService> _answerServiceMock = new();
+        private readonly Mock<IQuestionService> _questionServiceMock = new();
         private readonly QuestionnaireUseCase _useCase;
 
         public QuestionnaireUseCaseTests()
         {
-            _alternativeServiceMock = new Mock<IAlternativeService>();
-            _answerServiceMock = new Mock<IAnswerService>();
-            _useCase = new QuestionnaireUseCase(_alternativeServiceMock.Object, _answerServiceMock.Object);
+            _useCase = new QuestionnaireUseCase(_alternativeServiceMock.Object, _answerServiceMock.Object, _questionServiceMock.Object);
         }
 
         [Fact]
@@ -24,21 +23,36 @@ namespace Tests.Application.UseCases
         {
             // Arrange
             var input = new List<AnswerVerifyIn>
-        {
-            new() { QuestionId = 1, AlternativeId = 10, UserId = 100 },
-            new() { QuestionId = 2, AlternativeId = 20, UserId = 100 }
-        };
+            {
+                new() { QuestionId = 1, AlternativeId = 10},
+                new() { QuestionId = 2, AlternativeId = 20}
+            };
 
-            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeIdAsync(1))
-                .ReturnsAsync(10); // correta
-            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeIdAsync(2))
-                .ReturnsAsync(21); // incorreta
+            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeAsync(1))
+                .ReturnsAsync(
+                    new Alternative
+                    {
+                        Id = 10,
+                        IsCorrect = true
+                    }
+                );
+            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeAsync(2))
+                .ReturnsAsync(
+                    new Alternative
+                    {
+                        Id = 21,
+                        IsCorrect = false
+                    }
+                );
 
-            _answerServiceMock.Setup(x => x.InsertAnswerAsync(It.IsAny<Answer>()))
+            _answerServiceMock.Setup(x => x.UpsertAnswerAsync(It.IsAny<Answer>()))
                 .Returns(Task.CompletedTask);
 
+            _questionServiceMock.Setup(q => q.GetQuestion(It.IsAny<int>()))
+                .ReturnsAsync(new Question());
+
             // Act
-            var result = await _useCase.VerifyAnswersAsync(input);
+            var result = await _useCase.VerifyAnswersAsync(input, "1");
 
             // Assert
             Assert.NotNull(result);
@@ -46,7 +60,7 @@ namespace Tests.Application.UseCases
             Assert.True(result[0].IsCorrect);  // primeira correta
             Assert.False(result[1].IsCorrect); // segunda incorreta
 
-            _answerServiceMock.Verify(x => x.InsertAnswerAsync(It.IsAny<Answer>()), Times.Exactly(2));
+            _answerServiceMock.Verify(x => x.UpsertAnswerAsync(It.IsAny<Answer>()), Times.Exactly(2));
         }
 
         [Fact]
@@ -55,18 +69,18 @@ namespace Tests.Application.UseCases
             // Arrange
             var input = new List<AnswerVerifyIn>
         {
-            new() { QuestionId = 1, AlternativeId = 10, UserId = 100 }
+            new() { QuestionId = 1, AlternativeId = 10 }
         };
 
-            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeIdAsync(1))
-                .ReturnsAsync((int?)null);
+            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeAsync(1))
+                .ReturnsAsync((Alternative?)null);
 
             // Act
-            var result = await _useCase.VerifyAnswersAsync(input);
+            var result = await _useCase.VerifyAnswersAsync(input, "1");
 
             // Assert
             Assert.Null(result);
-            _answerServiceMock.Verify(x => x.InsertAnswerAsync(It.IsAny<Answer>()), Times.Never);
+            _answerServiceMock.Verify(x => x.UpsertAnswerAsync(It.IsAny<Answer>()), Times.Never);
         }
 
         [Fact]
@@ -74,20 +88,23 @@ namespace Tests.Application.UseCases
         {
             // Arrange
             var input = new List<AnswerVerifyIn>
-        {
-            new() { QuestionId = 1, AlternativeId = 10, UserId = 100 }
-        };
+            {
+                new() { QuestionId = 1, AlternativeId = 10 }
+            };
 
-            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeIdAsync(1))
-                .ReturnsAsync(10);
+            _alternativeServiceMock.Setup(x => x.GetCorrectAlternativeAsync(1))
+                .ReturnsAsync(new Alternative());
 
             Answer? insertedAnswer = null;
-            _answerServiceMock.Setup(x => x.InsertAnswerAsync(It.IsAny<Answer>()))
+            _answerServiceMock.Setup(x => x.UpsertAnswerAsync(It.IsAny<Answer>()))
                 .Callback<Answer>(a => insertedAnswer = a)
                 .Returns(Task.CompletedTask);
 
+            _questionServiceMock.Setup(q => q.GetQuestion(It.IsAny<int>()))
+            .ReturnsAsync(new Question() {Id = 1});
+
             // Act
-            await _useCase.VerifyAnswersAsync(input);
+            await _useCase.VerifyAnswersAsync(input, "100");
 
             // Assert
             Assert.NotNull(insertedAnswer);

@@ -9,7 +9,7 @@ namespace API.Controllers
 {
     [Route("api/questionnaire")]
     [Authorize]
-    public class QuestionnaireController(Questionnaire<UseCase _useCase) : ControllerBase
+    public class QuestionnaireController(QuestionnaireUseCase _useCase) : ControllerBase
     {
         /// <summary>
         /// Veryfy answer s
@@ -22,6 +22,7 @@ namespace API.Controllers
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
 
             if (answersVerifyIn.Count == 0 ||
                 answersVerifyIn.Any(a => a.AlternativeId <= 0) ||
@@ -33,7 +34,6 @@ namespace API.Controllers
                     Message = "Responda as questões antes de submeter ao formulário",
                 });
             }
-            else if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
 
@@ -50,12 +50,12 @@ namespace API.Controllers
         }
 
         [HttpGet("get-last-answers")]
-        public async Task<IActionResult> GetAnswers([FromQuery] string lessonId)
+        public async Task<IActionResult> GetAnswers([FromQuery] int lessonId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
 
-            await _useCase.VerifyAnswersAsync([], userId);
-            return Ok();
+            return Ok(await _useCase.GetLastAnsersAsync(lessonId, userId));
         }
     }
 }
