@@ -4,6 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IQuestionService
     {
-        public Task<Question> GetQuestion(int id);
+        public Task<Question> GetQuestionAsync(int id);
+        public Task<List<Question>> GetQuestionsByLessonIdAsync(int lessonId);
     }
 }

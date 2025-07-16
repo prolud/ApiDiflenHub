@@ -8,24 +8,30 @@ namespace Infra.Services
     {
         public async Task<List<Answer>> GetLastAnswersAsync(int lessonId, int userId)
         {
-            return await _context.Answers
+            var userAnswers = await _context.Answers
                 .Where(a => a.UserId == userId && a.LessonId == lessonId)
+                .OrderByDescending(a => a.Created)
                 .ToListAsync();
+
+            var lessonQuestionsIds = userAnswers
+                .GroupBy(a => a.QuestionId)
+                .Select(g => g.Key)
+                .ToList();
+
+            var latestResposes = new List<Answer>();
+
+            foreach (var lessonQuestionsId in lessonQuestionsIds)
+            {
+                latestResposes.Add(userAnswers.First(a => a.QuestionId == lessonQuestionsId));
+            }
+
+            return latestResposes;
         }
 
-        public async Task UpsertAnswerAsync(Answer answer)
+        public async Task InsertAnswerAsync(Answer answer)
         {
-            var existingAnswer = await _context.Answers
-            .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.UserId == answer.UserId && a.QuestionId == answer.QuestionId);
-
-            if (existingAnswer is not null) answer.Id = existingAnswer.Id;
-
-            if (existingAnswer is null || existingAnswer is not null && !existingAnswer.IsCorrect)
-            {
-                _context.Answers.Update(answer);
-                await _context.SaveChangesAsync();
-            }
+            _context.Answers.Add(answer);
+            await _context.SaveChangesAsync();
         }
     }
 }

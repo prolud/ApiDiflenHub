@@ -9,25 +9,18 @@ namespace Application.UseCases
         IAnswerService _answerService,
         IQuestionService _questionService)
     {
-        public async Task<List<AnswerVerifyOut>?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
+        public async Task<int?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
         {
-            List<AnswerVerifyOut> answersVerifyOut = [];
-
+            int? lessonId = null;
             foreach (var answerVerifyIn in answersVerifyIn)
             {
                 var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
                 if (correctAlternative is null) return null;
 
-                var question = await _questionService.GetQuestion(correctAlternative.QuestionId);
+                var question = await _questionService.GetQuestionAsync(correctAlternative.QuestionId);
+                lessonId = question.LessonId;
 
-                answersVerifyOut.Add(new AnswerVerifyOut
-                {
-                    QuestionId = answerVerifyIn.QuestionId,
-                    AlternativeId = answerVerifyIn.AlternativeId,
-                    IsCorrect = answerVerifyIn.AlternativeId == correctAlternative.Id
-                });
-
-                await _answerService.UpsertAnswerAsync(new Answer
+                await _answerService.InsertAnswerAsync(new Answer
                 {
                     AlternativeId = answerVerifyIn.AlternativeId,
                     UserId = int.Parse(userId),
@@ -38,11 +31,13 @@ namespace Application.UseCases
                 });
             }
 
-            return answersVerifyOut;
+            return lessonId;
         }
 
-        public async Task<List<AnswerVerifyOut>> GetLastAnsersAsync(int lessonId, string userId)
+        public async Task<List<AnswerVerifyOut>> GetLastAnswersAsync(int lessonId, string userId)
         {
+            var questionsFromLesson = await _questionService.GetQuestionsByLessonIdAsync(lessonId);
+            
             var lastAnswers = await _answerService.GetLastAnswersAsync(lessonId, int.Parse(userId));
             return lastAnswers
             .Select(la => new AnswerVerifyOut

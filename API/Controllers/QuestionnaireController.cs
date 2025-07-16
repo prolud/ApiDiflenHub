@@ -21,23 +21,11 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
-            if (answersVerifyIn.Count == 0 ||
-                answersVerifyIn.Any(a => a.AlternativeId <= 0) ||
-                answersVerifyIn.Any(a => a.QuestionId <= 0))
-            {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Responda as questões antes de submeter ao formulário",
-                });
-            }
+            var lessonId = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
 
-            var answersVerifyOut = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
-
-            if (answersVerifyOut is null)
+            if (lessonId is null)
             {
                 return BadRequest(new
                 {
@@ -46,7 +34,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(answersVerifyOut);
+            return Ok(await _useCase.GetLastAnswersAsync((int)lessonId, userId));
         }
 
         [HttpGet("get-last-answers")]
@@ -55,7 +43,7 @@ namespace API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
 
-            return Ok(await _useCase.GetLastAnsersAsync(lessonId, userId));
+            return Ok(await _useCase.GetLastAnswersAsync(lessonId, userId));
         }
     }
 }

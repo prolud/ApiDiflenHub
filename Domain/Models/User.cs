@@ -8,6 +8,7 @@ namespace Domain.Models
         public string Email { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public long Experience { get; set; }
         public bool Status { get; set; } = true;
     }
 }

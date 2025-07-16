@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         public Task InsertUser(User user);
         public Task<User?> GetUser(string email);
+        public Task AddExperience(int experienceToAdd, int userId);
     }
 }

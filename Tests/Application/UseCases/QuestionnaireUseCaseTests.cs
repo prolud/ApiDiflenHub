@@ -48,7 +48,7 @@ namespace Tests.Application.UseCases
             _answerServiceMock.Setup(x => x.UpsertAnswerAsync(It.IsAny<Answer>()))
                 .Returns(Task.CompletedTask);
 
-            _questionServiceMock.Setup(q => q.GetQuestion(It.IsAny<int>()))
+            _questionServiceMock.Setup(q => q.GetQuestionAsync(It.IsAny<int>()))
                 .ReturnsAsync(new Question());
 
             // Act
@@ -100,7 +100,7 @@ namespace Tests.Application.UseCases
                 .Callback<Answer>(a => insertedAnswer = a)
                 .Returns(Task.CompletedTask);
 
-            _questionServiceMock.Setup(q => q.GetQuestion(It.IsAny<int>()))
+            _questionServiceMock.Setup(q => q.GetQuestionAsync(It.IsAny<int>()))
             .ReturnsAsync(new Question() {Id = 1});
 
             // Act
