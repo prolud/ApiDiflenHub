@@ -1,3 +1,4 @@
+using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,12 @@ namespace Infra.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User?> GetUser(string email) => await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
+        public async Task<User?> GetUserAsync(string queryParam, QueryParam queryParamEnum)
+        {
+            if (queryParamEnum == QueryParam.Email) return await _context.Users.FirstOrDefaultAsync(user => user.Email == queryParam);
+            if (queryParamEnum == QueryParam.UserName) return await _context.Users.FirstOrDefaultAsync(user => user.Username == queryParam);
+            return null;
+        }
 
         public async Task InsertUser(User user)
         {

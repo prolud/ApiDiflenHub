@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -30,7 +31,7 @@ namespace API.Controllers
         public async Task<IActionResult> Login(LoginDtoIn loginDto)
         {
             var result = await _useCase.LoginUser(loginDto.Email, loginDto.Password);
-            
+
             if (result is null)
             {
                 return BadRequest(new
@@ -49,6 +50,16 @@ namespace API.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> Profile([FromQuery] string username)
+        {
+            var profile = await _useCase.GetProfileAsync(username);
+
+            if (profile is null) return NoContent();
+            
+            return Ok(profile);
         }
     }
 }

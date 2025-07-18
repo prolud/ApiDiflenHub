@@ -1,5 +1,6 @@
 using Application.Auth;
 using Domain.DTOs;
+using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Models;
 
@@ -21,7 +22,7 @@ namespace Application.UseCases
 
         public async Task<LoginDtoOut?> LoginUser(string email, string password)
         {
-            var userFromDatabase = await _userService.GetUser(email);
+            var userFromDatabase = await _userService.GetUserAsync(email, QueryParam.Email);
 
             if (userFromDatabase is null) return null;
 
@@ -36,6 +37,19 @@ namespace Application.UseCases
                 AccessToken = _jwtService.GenerateBearerToken(userFromDatabase),
                 ExpiresIn = _jwtService.GetExpirationDate(),
                 Message = "Successfully logged."
+            };
+        }
+
+        public async Task<ProfileDtoOut?> GetProfileAsync(string username)
+        {
+            var userFromDatabase = await _userService.GetUserAsync(username, QueryParam.UserName);
+            if (userFromDatabase is null) return null;
+
+            return new ProfileDtoOut
+            {
+                Id = userFromDatabase.Id,
+                Experience = userFromDatabase.Experience,
+                Username = userFromDatabase.Username
             };
         }
     }

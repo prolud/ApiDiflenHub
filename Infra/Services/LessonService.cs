@@ -20,6 +20,7 @@ namespace Infra.Services
         {
             return await _context.Lessons
                 .Where(_ => _.UnityId == unityId)
+                .OrderBy(l => l.Sequence)
                 .ToListAsync();
         }
     }

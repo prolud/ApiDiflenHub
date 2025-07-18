@@ -8,6 +8,7 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public int Sequence { get; set; }
 
         [Column("video_url")]
         public string? VideoUrl { get; set; }
