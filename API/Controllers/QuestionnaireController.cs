@@ -34,7 +34,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(await _useCase.GetLastAnswersAsync((int)lessonId, userId));
+            return Ok(await _useCase.GetLastAnswersAsync(userId, (int)lessonId));
         }
 
         [HttpGet("get-last-answers")]
@@ -43,7 +43,7 @@ namespace API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
 
-            return Ok(await _useCase.GetLastAnswersAsync(lessonId, userId));
+            return Ok(await _useCase.GetLastAnswersAsync(userId, lessonId));
         }
     }
 }

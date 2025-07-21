@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using Domain.DTOs;
 using Domain.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 
 namespace Application.UseCases
 {
@@ -9,6 +11,8 @@ namespace Application.UseCases
         IAnswerService _answerService,
         IQuestionService _questionService)
     {
+        const int DEFAULT_POINTS = 300;
+
         public async Task<int?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
         {
             int? lessonId = null;
@@ -34,12 +38,45 @@ namespace Application.UseCases
             return lessonId;
         }
 
-        public async Task<List<AnswerVerifyOut>> GetLastAnswersAsync(int lessonId, string userId)
+        public async Task<GetLastAnswersOut> GetLastAnswersAsync(string userId, int lessonId)
         {
-            var questionsFromLesson = await _questionService.GetQuestionsByLessonIdAsync(lessonId);
-            
-            var lastAnswers = await _answerService.GetLastAnswersAsync(lessonId, int.Parse(userId));
-            return lastAnswers
+            var userAnswers = await _answerService.GetAnswersByUserAndLesson(int.Parse(userId), lessonId);
+
+            var answers = GetAnswerVerifyOuts(userAnswers);
+
+            return new GetLastAnswersOut
+            {
+                Answers = answers,
+                PointsWeight = CalculatePoints(userAnswers)
+            };
+        }
+
+        private static int CalculatePoints(List<Answer> userAnswers)
+        {
+            int qtdErros = userAnswers.Where(ua => !ua.IsCorrect).Count();
+            int pontosPerdidos = qtdErros * 50;
+            int points = DEFAULT_POINTS - pontosPerdidos;
+
+            if (points <= 0)
+            {
+                points = 50;
+            }
+
+            return points;
+        }
+
+        private static List<AnswerVerifyOut> GetAnswerVerifyOuts(List<Answer> userAnswers)
+        {
+            var lessonQuestionsIds = userAnswers
+            .GroupBy(a => a.QuestionId)
+            .Select(g => g.Key)
+            .ToList();
+
+            var lastAnswers = lessonQuestionsIds
+            .Select(lqi => userAnswers.First(a => a.QuestionId == lqi))
+            .ToList();
+
+            var answers = lastAnswers
             .Select(la => new AnswerVerifyOut
             {
                 AlternativeId = la.AlternativeId,
@@ -47,6 +84,8 @@ namespace Application.UseCases
                 IsCorrect = la.IsCorrect,
             })
             .ToList();
+
+            return answers;
         }
     }
 }

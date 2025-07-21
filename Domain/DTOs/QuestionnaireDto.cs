@@ -13,9 +13,9 @@ namespace Domain.DTOs
         public bool IsCorrect { get; set; }
     }
 
-    public class GetAnswersIn
+    public class GetLastAnswersOut
     {
-        public int UserId { get; set; }
-        public int QuestionId { get; set; }
+        public List<AnswerVerifyOut> Answers { get; set; } = [];
+        public int PointsWeight { get; set; }
     }
 }
