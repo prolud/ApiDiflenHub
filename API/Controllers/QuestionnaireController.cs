@@ -21,11 +21,28 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
+            if (_useCase.TheresMoreThanOneLessonId(answersVerifyIn))
+            {
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Por favor, envie questões de apenas uma aula por vez",
+                });
+            }
+
+            var lessonId = answersVerifyIn.First().LessonId;
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (await _useCase.QuestionsAreAlreadyAnswered(userId, lessonId))
+            {
+                return BadRequest(new
+                {
+                    HttpStatusCode.BadRequest,
+                    Message = "Todas as questões já foram respondidas",
+                });
+            }
 
-            var lessonId = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
-
-            if (lessonId is null)
+            var result = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
+            if (result is null)
             {
                 return BadRequest(new
                 {
@@ -34,7 +51,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(await _useCase.GetLastAnswersAsync(userId, (int)lessonId));
+            return Ok(result);
         }
 
         [HttpGet("get-last-answers")]

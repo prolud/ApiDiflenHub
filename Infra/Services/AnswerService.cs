@@ -19,5 +19,11 @@ namespace Infra.Services
             _context.Answers.Add(answer);
             await _context.SaveChangesAsync();
         }
+
+        public async Task InsertAnswersAsync(List<Answer> answers)
+        {
+            _context.Answers.AddRange(answers);
+            await _context.SaveChangesAsync();
+        }
     }
 }

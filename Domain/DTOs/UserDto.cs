@@ -1,3 +1,5 @@
+using System.Diagnostics.Contracts;
+
 namespace Domain.DTOs
 {
     public class LoginDtoIn
@@ -26,5 +28,8 @@ namespace Domain.DTOs
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public long Experience { get; set; }
+        public int Level { get; set; }
+        public string ProfilePic { get; set; } = string.Empty;
+        public float LevelPercentage { get; set; }
     }
 }

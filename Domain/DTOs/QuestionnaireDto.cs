@@ -2,6 +2,7 @@ namespace Domain.DTOs
 {
     public class AnswerVerifyIn
     {
+        public int LessonId { get; set; }
         public int QuestionId { get; set; }
         public int AlternativeId { get; set; }
     }
@@ -16,6 +17,6 @@ namespace Domain.DTOs
     public class GetLastAnswersOut
     {
         public List<AnswerVerifyOut> Answers { get; set; } = [];
-        public int PointsWeight { get; set; }
+        public int CurrentPointsWeight { get; set; }
     }
 }

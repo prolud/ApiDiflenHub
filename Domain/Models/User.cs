@@ -10,5 +10,11 @@ namespace Domain.Models
         public string Password { get; set; } = string.Empty;
         public long Experience { get; set; }
         public bool Status { get; set; } = true;
+
+        [Column("file_type")]
+        public string FileType { get; set; } = string.Empty;
+
+        [Column("profile_picture")]
+        public byte[] ProfilePicture { get; set; } = [];
     }
 }

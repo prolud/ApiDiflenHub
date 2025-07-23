@@ -1,3 +1,4 @@
+using System.Formats.Asn1;
 using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Models;
@@ -18,9 +19,15 @@ namespace Infra.Services
 
         public async Task<User?> GetUserAsync(string queryParam, QueryParam queryParamEnum)
         {
-            if (queryParamEnum == QueryParam.Email) return await _context.Users.FirstOrDefaultAsync(user => user.Email == queryParam);
-            if (queryParamEnum == QueryParam.UserName) return await _context.Users.FirstOrDefaultAsync(user => user.Username == queryParam);
-            return null;
+            switch (queryParamEnum)
+            {
+                case QueryParam.Email:
+                    return await _context.Users.FirstOrDefaultAsync(user => user.Email == queryParam);
+                case QueryParam.UserName:
+                    return await _context.Users.FirstOrDefaultAsync(user => user.Username == queryParam);
+                default:
+                    return null;
+            }
         }
 
         public async Task InsertUser(User user)
