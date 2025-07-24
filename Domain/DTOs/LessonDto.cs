@@ -1,5 +1,3 @@
-using Domain.Models;
-
 namespace Domain.DTOs;
 
 public class LessonDtoOut
@@ -8,4 +6,6 @@ public class LessonDtoOut
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
     public string? VideoUrl { get; set; }
+    public bool Concluded { get; set; }
+    public ICollection<QuestionDtoOut> Questions { get; set; } = [];
 }

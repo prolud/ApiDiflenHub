@@ -8,9 +8,10 @@ namespace Infra.Services
     {
         public async Task<Alternative?> GetCorrectAlternativeAsync(int questionId)
         {
-            var correctAlternative = await _context.Alternatives.FirstOrDefaultAsync(a => a.QuestionId == questionId && a.IsCorrect);
-
-            if (correctAlternative is null) return null;
+            var correctAlternative = await _context.Alternatives
+            .Where(a => a.QuestionId == questionId && a.IsCorrect)
+            .Include(a => a.Question)
+            .FirstOrDefaultAsync();
 
             return correctAlternative;
         }

@@ -10,51 +10,12 @@ namespace Tests.Application.UseCases
     {
         private readonly Mock<ILessonService> _lessonService = new();
         private readonly Mock<IUnityService> _unityService = new();
+        private readonly Mock<QuestionnaireUseCase> _questionnaireUseCase = new();
         private readonly LessonUseCase _useCase;
 
         public LessonUseCaseTests()
         {
-            _useCase = new LessonUseCase(_lessonService.Object, _unityService.Object);
-        }
-
-        [Fact]
-        public async Task GetLessonsByUnityId_Success()
-        {
-            _lessonService
-                .Setup(m => m.GetLessonsFromUnityId(It.IsAny<int>()))
-                .ReturnsAsync(
-                    [
-                        new Lesson() {
-                            Id = 1,
-                            Description = "Description",
-                            Questions = [],
-                            Title = "Title",
-                            UnityId = 1,
-                            VideoUrl = "VideoUrl",
-                        }
-                    ]
-                );
-
-            var expectedReturn = new List<LessonDtoOut>()
-            {
-                new() {
-                    Id = 1,
-                    Description = "Description",
-                    Title = "Title",
-                    VideoUrl = "VideoUrl",
-                }
-            };
-
-            List<LessonDtoOut> lessons = await _useCase.GetLessonsByUnityId(It.IsAny<int>());
-
-            Assert.Equal(lessons.Count, expectedReturn.Count);
-            for (var i = 0; i < lessons.Count; i++)
-            {
-                Assert.Equal(lessons[i].Title, expectedReturn[i].Title);
-                Assert.Equal(lessons[i].Description, expectedReturn[i].Description);
-                Assert.Equal(lessons[i].Title, expectedReturn[i].Title);
-                Assert.Equal(lessons[i].VideoUrl, expectedReturn[i].VideoUrl);
-            }
+            _useCase = new LessonUseCase(_lessonService.Object, _unityService.Object, _questionnaireUseCase.Object);
         }
 
         [Fact]

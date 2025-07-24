@@ -13,5 +13,7 @@ namespace Domain.Models
 
         [Column("question_id")]
         public int QuestionId { get; set; }
+
+        public Question Question { get; set; } = null!;
     }
 }

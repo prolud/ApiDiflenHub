@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Route("api/unity")]
+[ApiController]
 [Authorize]
 public class UnityController(UnityUseCase _unityUseCase) : ControllerBase
 {

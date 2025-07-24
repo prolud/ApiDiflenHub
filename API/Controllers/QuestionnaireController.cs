@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Route("api/questionnaire")]
+    [ApiController]
     [Authorize]
     public class QuestionnaireController(QuestionnaireUseCase _useCase) : ControllerBase
     {
         /// <summary>
-        /// Veryfy answer s
+        /// Veryfy answers
         /// </summary>
         /// <param name="lessonId"></param>
         /// <param name="unityName"></param>

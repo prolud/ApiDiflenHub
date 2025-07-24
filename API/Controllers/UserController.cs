@@ -15,7 +15,7 @@ namespace API.Controllers
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        [HttpPut("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDtoIn registerDto)
         {
             await _useCase.RegisterUser(registerDto.Email, registerDto.Username, registerDto.Password);
@@ -58,7 +58,7 @@ namespace API.Controllers
             var profile = await _useCase.GetProfileAsync(username);
 
             if (profile is null) return NoContent();
-            
+
             return Ok(profile);
         }
     }

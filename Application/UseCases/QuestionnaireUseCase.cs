@@ -7,14 +7,12 @@ namespace Application.UseCases
     public class QuestionnaireUseCase(
         IAlternativeService _alternativeService,
         IAnswerService _answerService,
-        IQuestionService _questionService,
         IUserService _userService)
     {
         const int DEFAULT_POINTS = 300;
 
         public async Task<GetLastAnswersOut?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
         {
-            int? lessonId = null;
             var answersToInsert = new List<Answer>();
 
             foreach (var answerVerifyIn in answersVerifyIn)
@@ -22,23 +20,19 @@ namespace Application.UseCases
                 var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
                 if (correctAlternative is null) return null;
 
-                var question = await _questionService.GetQuestionAsync(correctAlternative.QuestionId);
-                lessonId = question.LessonId;
-
                 answersToInsert.Add(new Answer
                 {
                     AlternativeId = answerVerifyIn.AlternativeId,
                     UserId = int.Parse(userId),
-                    QuestionId = question.Id,
-                    LessonId = question.LessonId,
+                    QuestionId = correctAlternative.Question.Id,
+                    LessonId = correctAlternative.Question.LessonId,
                     IsCorrect = answerVerifyIn.AlternativeId == correctAlternative.Id,
                     Created = DateTime.Now,
                 });
             }
-
             await _answerService.InsertAnswersAsync(answersToInsert);
-            var lastAnswers = await GetLastAnswersAsync(userId, (int)lessonId!);
 
+            var lastAnswers = await GetLastAnswersAsync(userId, answersVerifyIn.First().LessonId);
             if (!lastAnswers.Answers.Any(ai => !ai.IsCorrect))
             {
                 await _userService.AddExperience(lastAnswers.CurrentPointsWeight, int.Parse(userId));
@@ -119,7 +113,7 @@ namespace Application.UseCases
             var theresAnswers = oldLastAnswers.Answers.Count > 0;
             var theresWrongAnswers = oldLastAnswers.Answers.Any(la => !la.IsCorrect);
             var allAnswersAreCorrect = !theresWrongAnswers;
-            
+
             return theresAnswers && allAnswersAreCorrect;
         }
     }

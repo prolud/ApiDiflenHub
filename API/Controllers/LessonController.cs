@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Claims;
 using Application.UseCases;
 using Domain.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Route("api/lessons")]
+    [ApiController]
     [Authorize]
     public class LessonController(LessonUseCase _useCase) : ControllerBase
     {
@@ -15,25 +17,22 @@ namespace API.Controllers
         /// </summary>
         /// <param name="unityId"></param>
         /// <returns></returns>
-        [HttpGet("get-lessons-by-unity")]
-        public async Task<IActionResult> GetLessonsFromUnity([FromQuery] int unityId, [FromQuery] string unityName)
+        [HttpGet("get-lessons-by-unity-name")]
+        public async Task<IActionResult> GetLessonsFromUnity([FromQuery] string unityName)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             List<LessonDtoOut> lessons;
 
-            if (unityId > 0)
+            if (!string.IsNullOrEmpty(unityName))
             {
-                lessons = await _useCase.GetLessonsByUnityId(unityId);
-            }
-            else if (!string.IsNullOrEmpty(unityName))
-            {
-                lessons = await _useCase.GetLessonsByUnityName(unityName);
+                lessons = await _useCase.GetLessonsByUnityName(unityName, userId);
             }
             else
             {
                 return BadRequest(new
                 {
                     HttpStatusCode.BadRequest,
-                    Message = "Endereço inválido. Informe o ID ou o nome da unidade.",
+                    Message = "Endereço inválido. Informe o nome da unidade.",
                 });
             }
 
@@ -48,9 +47,11 @@ namespace API.Controllers
         [HttpGet("get-lesson")]
         public async Task<IActionResult> GetLesson([FromQuery] string unityName, [FromQuery] int lessonId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             if (lessonId >= 0 && !string.IsNullOrEmpty(unityName))
             {
-                var lesson = await _useCase.GetLesson(unityName, lessonId);
+                var lesson = await _useCase.GetLesson(unityName, lessonId, userId);
 
                 if (lesson is null)
                 {

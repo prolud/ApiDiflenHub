@@ -4,9 +4,9 @@ using Domain.Models;
 
 namespace Application.UseCases;
 
-public class LessonUseCase(ILessonService _lessonService, IUnityService _unityService)
+public class LessonUseCase(ILessonService _lessonService, IUnityService _unityService, QuestionnaireUseCase _questionnaireUseCase)
 {
-    public async Task<List<LessonDtoOut>> GetLessonsByUnityId(int unityId)
+    public async Task<List<LessonDtoOut>> GetLessonsByUnityId(int unityId, string userId)
     {
         var lessons = new List<LessonDtoOut>();
         var dblessons = await _lessonService.GetLessonsFromUnityId(unityId);
@@ -18,14 +18,15 @@ public class LessonUseCase(ILessonService _lessonService, IUnityService _unitySe
                 Id = lesson.Id,
                 Title = lesson.Title,
                 Description = lesson.Description,
-                VideoUrl = lesson.VideoUrl
+                VideoUrl = lesson.VideoUrl,
+                Concluded = await _questionnaireUseCase.QuestionsAreAlreadyAnswered(userId, lesson.Id),
             });
         }
 
         return lessons;
     }
 
-    public async Task<List<LessonDtoOut>> GetLessonsByUnityName(string unityName)
+    public async Task<List<LessonDtoOut>> GetLessonsByUnityName(string unityName, string userId)
     {
         var unity = await _unityService.GetUnityByName(unityName);
 
@@ -41,18 +42,46 @@ public class LessonUseCase(ILessonService _lessonService, IUnityService _unitySe
                 Id = lesson.Id,
                 Title = lesson.Title,
                 Description = lesson.Description,
-                VideoUrl = lesson.VideoUrl
+                VideoUrl = lesson.VideoUrl,
+                Concluded = await _questionnaireUseCase.QuestionsAreAlreadyAnswered(userId, lesson.Id),
             });
         }
 
         return lessons;
     }
 
-    public async Task<Lesson?> GetLesson(string unityName, int lessonId)
+    public async Task<LessonDtoOut?> GetLesson(string unityName, int lessonId, string userId)
     {
         var unity = await _unityService.GetUnityByName(unityName);
         if (unity is null) return null;
 
-        return await _lessonService.GetLessonByIdAndUnity(unity.Id, lessonId);
+        var lessonFromDb = await _lessonService.GetLessonByIdAndUnity(unity.Id, lessonId);
+        if (lessonFromDb is null) return null;
+
+        var questions = lessonFromDb.Questions
+        .Select(q => new QuestionDtoOut
+        {
+            Id = q.Id,
+            Statement = q.Statement,
+            Alternatives = q.Alternatives
+            .Select(a => new AlternativeDtoOut
+            {
+                Id = a.Id,
+                QuestionId = a.QuestionId,
+                Text = a.Text
+            })
+            .ToList()
+        })
+        .ToList();
+
+        return new LessonDtoOut
+        {
+            Id = lessonFromDb.Id,
+            Description = lessonFromDb.Description,
+            Title = lessonFromDb.Title,
+            VideoUrl = lessonFromDb.VideoUrl,
+            Questions = questions,
+            Concluded = await _questionnaireUseCase.QuestionsAreAlreadyAnswered(userId, lessonFromDb.Id),
+        };
     }
 }
