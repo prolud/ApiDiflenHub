@@ -51,21 +51,7 @@ namespace Application.UseCases
                 Experience = userFromDatabase.Experience,
                 Username = userFromDatabase.Username,
                 ProfilePic = $"data:{userFromDatabase.FileType};base64,{System.Text.Encoding.UTF8.GetString(userFromDatabase.ProfilePicture)}",
-                Level = CalculateLevel(userFromDatabase.Experience),
-                LevelPercentage = CalculateLevelPercentage(userFromDatabase.Experience),
             };
-        }
-
-        private static int CalculateLevel(long experience)
-        {
-            if (experience <= 1000) return 1;
-            return 1 + (int)experience / 1000;
-        }
-
-        private static float CalculateLevelPercentage(long experience)
-        {
-            if (experience == 0) return 0;
-            return (int)experience % 1000 / 10;
         }
     }
 }
