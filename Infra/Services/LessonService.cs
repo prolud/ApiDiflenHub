@@ -7,10 +7,10 @@ namespace Infra.Services
 {
     public class LessonService(AppDbContext _context) : ILessonService
     {
-        public async Task<Lesson?> GetLessonByIdAndUnity(int unityId, int lessonId)
+        public async Task<Lesson?> GetLessonById(int lessonId)
         {
             return await _context.Lessons
-                .Where(_ => _.UnityId == unityId && _.Id == lessonId)
+                .Where(_ => _.Id == lessonId)
                     .Include(_ => _.Questions)
                         .ThenInclude(q => q.Alternatives)
                 .FirstOrDefaultAsync();
