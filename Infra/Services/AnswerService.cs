@@ -14,6 +14,15 @@ namespace Infra.Services
                 .ToListAsync();
         }
 
+        public async Task<List<Answer>> GetAnswersByUserAndUnity(int unityId, int userId)
+        {
+            return await _context.Answers
+                .Include(a => a.Question)
+                .Where(a => a.UserId == userId && a.UnityId == unityId)
+                .OrderByDescending(a => a.Created)
+                .ToListAsync();
+        }
+
         public async Task InsertAnswerAsync(Answer answer)
         {
             _context.Answers.Add(answer);

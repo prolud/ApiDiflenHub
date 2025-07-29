@@ -4,6 +4,7 @@ namespace Domain.DTOs
     {
         public int LessonId { get; set; }
         public int QuestionId { get; set; }
+        public required string UnityName { get; set; }
         public int AlternativeId { get; set; }
     }
 
@@ -18,5 +19,7 @@ namespace Domain.DTOs
     {
         public List<AnswerVerifyOut> Answers { get; set; } = [];
         public int CurrentPointsWeight { get; set; }
+        public bool WasAllQuestionsCorrectlyAnswered { get; set; }
+        public bool WasCertificateAlreadyIssued { get; set; }
     }
 }
