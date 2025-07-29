@@ -55,7 +55,7 @@ public class LessonUseCase(ILessonService _lessonService, IUnityService _unitySe
         var unity = await _unityService.GetUnityByName(unityName);
         if (unity is null) return null;
 
-        var lessonFromDb = await _lessonService.GetLessonByIdAndUnity(unity.Id, lessonId);
+        var lessonFromDb = await _lessonService.GetLessonById(lessonId);
         if (lessonFromDb is null) return null;
 
         var questions = lessonFromDb.Questions

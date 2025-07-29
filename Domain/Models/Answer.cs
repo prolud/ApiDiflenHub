@@ -20,9 +20,14 @@ namespace Domain.Models
         [Column("lesson_id")]
         public int LessonId { get; set; }
 
+        [Column("unity_id")]
+        public int UnityId { get; set; }
+
         [Column("is_correct")]
         public bool IsCorrect { get; set; }
 
         public DateTime Created { get; set; }
+
+        public Question Question { get; set; } = null!;
     }
 }

@@ -17,5 +17,12 @@ namespace Infra.Services
                 .Where(q => q.LessonId == lessonId)
                 .ToListAsync();
         }
+
+        public async Task<List<Question>> GetQuestionsFromUnity(int unityId)
+        {
+            return await _context.Questions
+            .Where(q => q.UnityId == unityId)
+            .ToListAsync();
+        }
     }
 }

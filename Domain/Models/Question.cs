@@ -11,6 +11,9 @@ namespace Domain.Models
         [Column("lesson_id")]
         public int LessonId { get; set; }
 
+        [Column("unity_id")]
+        public int UnityId { get; set; }
+
         public ICollection<Alternative> Alternatives { get; set; } = [];
     }
 }

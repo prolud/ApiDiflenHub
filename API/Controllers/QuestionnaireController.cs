@@ -10,7 +10,7 @@ namespace API.Controllers
     [Route("api/questionnaire")]
     [ApiController]
     [Authorize]
-    public class QuestionnaireController(QuestionnaireUseCase _useCase) : ControllerBase
+    public class QuestionnaireController(QuestionnaireUseCase _useCase, CertificateUseCase _certificateUseCase) : ControllerBase
     {
         /// <summary>
         /// Veryfy answers
@@ -22,6 +22,9 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
         {
+            var answerWithUnityName = answersVerifyIn.FirstOrDefault(a => !string.IsNullOrEmpty(a.UnityName));
+            var unityName = answerWithUnityName!.UnityName;
+            
             if (_useCase.TheresMoreThanOneLessonId(answersVerifyIn))
             {
                 return BadRequest(new
@@ -52,16 +55,24 @@ namespace API.Controllers
                 });
             }
 
+            result.WasAllQuestionsCorrectlyAnswered = await _certificateUseCase.WasAllQuestionsCorrectlyAnswered(unityName, userId);
+            result.WasCertificateAlreadyIssued = await _certificateUseCase.WasCertificateAlreadyIssued(userId, unityName);
+
             return Ok(result);
         }
 
         [HttpGet("get-last-answers")]
-        public async Task<IActionResult> GetAnswers([FromQuery] int lessonId)
+        public async Task<IActionResult> GetAnswers([FromQuery] int lessonId, [FromQuery] string unityName)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
 
-            return Ok(await _useCase.GetLastAnswersAsync(userId, lessonId));
+            var result = await _useCase.GetLastAnswersAsync(userId, lessonId);
+
+            result.WasAllQuestionsCorrectlyAnswered = await _certificateUseCase.WasAllQuestionsCorrectlyAnswered(unityName, userId);
+            result.WasCertificateAlreadyIssued = await _certificateUseCase.WasCertificateAlreadyIssued(userId, unityName);
+
+            return Ok(result);
         }
     }
 }

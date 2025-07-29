@@ -7,28 +7,38 @@ namespace Application.UseCases
     public class QuestionnaireUseCase(
         IAlternativeService _alternativeService,
         IAnswerService _answerService,
-        IUserService _userService)
+        IUserService _userService,
+        IUnityService _unityService)
     {
         const int DEFAULT_POINTS = 300;
 
         public async Task<GetLastAnswersOut?> VerifyAnswersAsync(List<AnswerVerifyIn> answersVerifyIn, string userId)
         {
             var answersToInsert = new List<Answer>();
+            var answerWithUnityName = answersVerifyIn.FirstOrDefault(a => !string.IsNullOrEmpty(a.UnityName));
 
-            foreach (var answerVerifyIn in answersVerifyIn)
+            if (answerWithUnityName is not null)
             {
-                var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
-                if (correctAlternative is null) return null;
+                var unityName = answerWithUnityName.UnityName;
 
-                answersToInsert.Add(new Answer
+                foreach (var answerVerifyIn in answersVerifyIn)
                 {
-                    AlternativeId = answerVerifyIn.AlternativeId,
-                    UserId = int.Parse(userId),
-                    QuestionId = correctAlternative.Question.Id,
-                    LessonId = correctAlternative.Question.LessonId,
-                    IsCorrect = answerVerifyIn.AlternativeId == correctAlternative.Id,
-                    Created = DateTime.Now,
-                });
+                    var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
+                    if (correctAlternative is null) return null;
+
+                    var unity = await _unityService.GetUnityByName(unityName);
+
+                    answersToInsert.Add(new Answer
+                    {
+                        AlternativeId = answerVerifyIn.AlternativeId,
+                        UserId = int.Parse(userId),
+                        QuestionId = correctAlternative.Question.Id,
+                        LessonId = correctAlternative.Question.LessonId,
+                        UnityId = unity!.Id,
+                        IsCorrect = answerVerifyIn.AlternativeId == correctAlternative.Id,
+                        Created = DateTime.Now,
+                    });
+                }
             }
             await _answerService.InsertAnswersAsync(answersToInsert);
 
