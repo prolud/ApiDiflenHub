@@ -106,7 +106,6 @@ namespace API
         internal static void ConfigureAPI(WebApplication app)
         {
             app.UseHttpsRedirection();
-            app.UseAuthorization();
             app.MapControllers();
         }
 
