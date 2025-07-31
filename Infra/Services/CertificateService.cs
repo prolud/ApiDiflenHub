@@ -1,21 +1,19 @@
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Services
 {
-    public class CertificateService(AppDbContext _context) : ICertificateService
+    public class CertificateService(IUnityRepository unityRepository, ICertificateRepository certificateRepository) : ICertificateService
     {
-        public async Task<Certificate?> GetAsync(int userId, int unityId)
+        public async Task<bool> WasCertificateAlreadyIssued(string userId, string unityName)
         {
-            return await _context.Certificates
-            .FirstOrDefaultAsync(c => c.UserId == userId && c.UnityId == unityId);
-        }
+            var unity = await unityRepository.GetAsync(u => u.Name == unityName);
+            if (unity is null) return false;
 
-        public async Task InsertAsync(Certificate user)
-        {
-            await _context.Certificates.AddAsync(user);
-            await _context.SaveChangesAsync();
+            var certificate = await certificateRepository.GetAsync(c => c.UserId == int.Parse(userId) && c.UnityId == unity.Id);
+            return certificate is not null;
         }
     }
 }
