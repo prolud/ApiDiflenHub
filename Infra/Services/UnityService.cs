@@ -1,21 +1,29 @@
-using Domain.Interfaces;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 
 namespace Infra.Services
 {
-    public class UnityService(AppDbContext _context) : IUnityService
+    public class UnityService(IUnityRepository unityRepository, IQuestionRepository questionRepository, IAnswerRepository answerRepository) : IUnityService
     {
-        public async Task<List<Unity>> GetUnities()
+        public async Task<bool> WasAllQuestionsCorrectlyAnswered(string unityName, string userId)
         {
-            return await _context.Unities
-                .ToListAsync();
-        }
+            var unity = await unityRepository.GetAsync(u => u.Name == unityName);
+            if (unity is null) return false;
 
-        public async Task<Unity?> GetUnityByName(string unityName)
-        {
-            return await _context.Unities
-                .FirstOrDefaultAsync(u => u.Name == unityName);
+            var questionsFromUnity = await questionRepository.GetListAsync(q => q.UnityId == unity.Id);
+            var questionIds = questionsFromUnity.Select(q => q.Id).ToList();
+
+            var unityAnswersFromUser = await answerRepository.GetListAsync(a => a.UnityId == unity.Id && a.UserId == int.Parse(userId));
+
+            foreach (var questionId in questionIds)
+            {
+                if (!unityAnswersFromUser.Any(a => a.QuestionId == questionId && a.IsCorrect))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
