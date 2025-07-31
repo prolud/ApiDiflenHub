@@ -1,5 +1,5 @@
 using Domain.DTOs;
-using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Domain.Models;
 
 namespace Application.UseCases;

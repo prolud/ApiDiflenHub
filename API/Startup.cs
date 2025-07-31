@@ -2,7 +2,7 @@ using System.Text;
 using API.Middlewares;
 using Application.Auth;
 using Application.UseCases;
-using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Infra;
 using Infra.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -50,7 +50,6 @@ namespace API
             services.AddScoped<IQuestionService, QuestionService>();
 
             services.AddScoped<QuestionnaireUseCase>();
-            services.AddScoped<CertificateUseCase>();
             services.AddScoped<UserUseCase>();
             services.AddScoped<UnityUseCase>();
             services.AddScoped<LessonUseCase>();

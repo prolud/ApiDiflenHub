@@ -1,7 +1,7 @@
 using Application.Auth;
 using Domain.DTOs;
 using Domain.Enums;
-using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Domain.Models;
 
 namespace Application.UseCases

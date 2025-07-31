@@ -1,6 +1,6 @@
 using System.Formats.Asn1;
 using Domain.Enums;
-using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 

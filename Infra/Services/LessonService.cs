@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
