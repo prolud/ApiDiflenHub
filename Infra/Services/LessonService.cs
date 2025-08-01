@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Services
 {
-    public class LessonService(AppDbContext _context) : ILessonService
+    public class LessonService(IAnswerService answerService) : ILessonService
     {
         public async Task<bool> LessonAreAlreadyAnswered(string userId, int lessonId)
         {
-            var oldLastAnswers = await GetLastAnswersAsync(userId, lessonId);
+            var oldLastAnswers = await answerService.GetLastAnswersAsync(userId, lessonId);
 
             if (oldLastAnswers.Answers.Count == 0)
             {

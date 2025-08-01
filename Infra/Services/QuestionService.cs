@@ -1,28 +1,26 @@
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Services
 {
-    public class QuestionService(AppDbContext _context) : IQuestionService
+    public class QuestionService(IQuestionRepository questionRepository, IAnswerRepository answerRepository) : IQuestionService
     {
-        public async Task<Question> GetQuestionAsync(int id)
+        public async Task<bool> WasAllQuestionsCorrectlyAnswered(int unityId, string userId)
         {
-            return await _context.Questions.FirstAsync(q => q.Id == id);
-        }
+            var questionsFromUnity = await questionRepository.GetListAsync(q => q.UnityId == unityId);
+            var questionIds = questionsFromUnity.Select(q => q.Id).ToList();
 
-        public async Task<List<Question>> GetQuestionsByLessonIdAsync(int lessonId)
-        {
-            return await _context.Questions
-                .Where(q => q.LessonId == lessonId)
-                .ToListAsync();
-        }
+            var unityAnswersFromUser = await answerRepository.GetListAsync(a => a.UnityId == unityId && a.UserId == int.Parse(userId));
 
-        public async Task<List<Question>> GetQuestionsFromUnity(int unityId)
-        {
-            return await _context.Questions
-            .Where(q => q.UnityId == unityId)
-            .ToListAsync();
+            foreach (var questionId in questionIds)
+            {
+                if (!unityAnswersFromUser.Any(a => a.QuestionId == questionId && a.IsCorrect))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
