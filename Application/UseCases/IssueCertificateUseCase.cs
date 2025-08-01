@@ -8,7 +8,7 @@ namespace Application.UseCases
 {
     public class IssueCertificateUseCase(
         ICertificateService certificateService,
-        IUnityService unityService,
+        IQuestionService questionService,
         ICertificateRepository certificateRepository,
         IUnityRepository unityRepository)
     {
@@ -23,7 +23,7 @@ namespace Application.UseCases
                 StatusCode = HttpStatusCode.BadRequest
             };
 
-            if (await certificateService.WasCertificateAlreadyIssued(userId, unityName))
+            if (await certificateService.WasCertificateAlreadyIssued(userId, unity.Id))
             {
                 return new()
                 {
@@ -32,7 +32,7 @@ namespace Application.UseCases
                 };
             }
 
-            if (await unityService.WasAllQuestionsCorrectlyAnswered(unityName, userId))
+            if (await questionService.WasAllQuestionsCorrectlyAnswered(unity.Id, userId))
             {
                 var certificate = new Certificate
                 {
