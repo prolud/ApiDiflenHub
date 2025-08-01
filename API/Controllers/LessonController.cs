@@ -1,16 +1,14 @@
-using System.Net;
 using System.Security.Claims;
 using Application.UseCases;
-using Domain.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/lessons")]
+    [Route("api/lesson")]
     [ApiController]
     [Authorize]
-    public class LessonController(LessonUseCase _useCase) : ControllerBase
+    public class LessonController(GetLessonsUseCase getLessonsUseCase, GetLessonUseCase getLessonUseCase) : ControllerBase
     {
         /// <summary>
         /// Lesson
@@ -21,51 +19,18 @@ namespace API.Controllers
         public async Task<IActionResult> GetLessonsFromUnity([FromQuery] string unityName)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            List<LessonDtoOut> lessons;
+            var result = await getLessonsUseCase.ExecuteAsync(unityName, userId);
 
-            if (!string.IsNullOrEmpty(unityName))
-            {
-                lessons = await _useCase.GetLessonsByUnityName(unityName, userId);
-            }
-            else
-            {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Endereço inválido. Informe o nome da unidade.",
-                });
-            }
-
-            if (lessons.Count == 0)
-            {
-                return NoContent();
-            }
-
-            return Ok(lessons);
+            return StatusCode((int)result.StatusCode, result.Content);
         }
 
         [HttpGet("get-lesson")]
         public async Task<IActionResult> GetLesson([FromQuery] string unityName, [FromQuery] int lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            var result = await getLessonUseCase.GetLesson(unityName, lessonId, userId);
 
-            if (lessonId >= 0 && !string.IsNullOrEmpty(unityName))
-            {
-                var lesson = await _useCase.GetLesson(unityName, lessonId, userId);
-
-                if (lesson is null)
-                {
-                    return NoContent();
-                }
-
-                return Ok(lesson);
-            }
-
-            return BadRequest(new
-            {
-                HttpStatusCode.BadRequest,
-                Message = "Endereço inválido. Informe o índice da lição e o Id da unidade.",
-            });
+            return StatusCode((int)result.StatusCode, result.Content);
         }
     }
 }
