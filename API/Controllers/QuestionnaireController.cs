@@ -1,4 +1,3 @@
-using System.Net;
 using System.Security.Claims;
 using Application.UseCases;
 using Domain.DTOs;
@@ -10,7 +9,7 @@ namespace API.Controllers
     [Route("api/questionnaire")]
     [ApiController]
     [Authorize]
-    public class QuestionnaireController(QuestionnaireUseCase _useCase, CertificateUseCase _certificateUseCase) : ControllerBase
+    public class QuestionnaireController(VerifyAnswersUseCase verifyAnswersUseCase, GetLastAnswersUseCase getLastAnswersUseCase) : ControllerBase
     {
         /// <summary>
         /// Veryfy answers
@@ -20,57 +19,24 @@ namespace API.Controllers
         /// <param name="answers"></param>
         /// <returns></returns>
         [HttpPost("verify-answers")]
-        public async Task<IActionResult> VerifyAnswers([FromBody] List<AnswerVerifyIn> answersVerifyIn)
+        public async Task<IActionResult> VerifyAnswers([FromBody] AnswerVerifyIn answerVerifyIn)
         {
-            var answerWithUnityName = answersVerifyIn.FirstOrDefault(a => !string.IsNullOrEmpty(a.UnityName));
-            var unityName = answerWithUnityName!.UnityName;
-            
-            if (_useCase.TheresMoreThanOneLessonId(answersVerifyIn))
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value!; 
+            var result = await verifyAnswersUseCase.ExecuteAsync(answerVerifyIn, userId);
+
+            if (result.IsSuccessStatusCode)
             {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Por favor, envie questões de apenas uma aula por vez",
-                });
+                return StatusCode((int)result.StatusCode, result.Content);
             }
 
-            var lessonId = answersVerifyIn.First().LessonId;
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            if (await _useCase.QuestionsAreAlreadyAnswered(userId, lessonId))
-            {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Todas as questões já foram respondidas",
-                });
-            }
-
-            var result = await _useCase.VerifyAnswersAsync(answersVerifyIn, userId);
-            if (result is null)
-            {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Não foi possível encontrar uma das alternativas de alguma questão",
-                });
-            }
-
-            result.WasAllQuestionsCorrectlyAnswered = await _certificateUseCase.WasAllQuestionsCorrectlyAnswered(unityName, userId);
-            result.WasCertificateAlreadyIssued = await _certificateUseCase.WasCertificateAlreadyIssued(userId, unityName);
-
-            return Ok(result);
+            return StatusCode((int)result.StatusCode, result.Message);
         }
 
         [HttpGet("get-last-answers")]
         public async Task<IActionResult> GetAnswers([FromQuery] int lessonId, [FromQuery] string unityName)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId) || userId == "0") return Unauthorized();
-
-            var result = await _useCase.GetLastAnswersAsync(userId, lessonId);
-
-            result.WasAllQuestionsCorrectlyAnswered = await _certificateUseCase.WasAllQuestionsCorrectlyAnswered(unityName, userId);
-            result.WasCertificateAlreadyIssued = await _certificateUseCase.WasCertificateAlreadyIssued(userId, unityName);
+            var result = await getLastAnswersUseCase.ExecuteAsync(userId, lessonId, unityName);
 
             return Ok(result);
         }
