@@ -1,14 +1,15 @@
 using Domain.DTOs;
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Services
 {
-    public class AnswerService(AppDbContext _context) : IAnswerService
+    public class AnswerService(AppDbContext _context, IAlternativeService _alternativeService, IAnswerRepository unityRepository, IUserService _userService) : IAnswerService
     {
         const int DEFAULT_POINTS = 300;
-        
+
         private async Task<List<Answer>> GetAnswersByUserAndLesson(int userId, int lessonId)
         {
             return await _context.Answers
@@ -28,6 +29,39 @@ namespace Infra.Services
                 Answers = answers,
                 CurrentPointsWeight = CalculatePoints(userAnswers)
             };
+        }
+
+        public async Task<GetLastAnswersOut?> VerifyAnswersAsync(AnswerVerifyIn answerVerifyIn, string userId, int unityId)
+        {
+            var answersToInsert = new List<Answer>();
+
+            foreach (var alternativeId in answerVerifyIn.AlternativeIds)
+            {
+                var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
+                if (correctAlternative is null) return null;
+
+                answersToInsert.Add(new Answer
+                {
+                    AlternativeId = alternativeId,
+                    UserId = int.Parse(userId),
+                    QuestionId = correctAlternative.Question.Id,
+                    LessonId = correctAlternative.Question.LessonId,
+                    UnityId = unityId,
+                    IsCorrect = alternativeId == correctAlternative.Id,
+                    Created = DateTime.Now,
+                });
+            }
+
+            await unityRepository.InsertRangeAsync(answersToInsert);
+
+            var lastAnswers = await GetLastAnswersAsync(userId, answerVerifyIn.LessonId);
+
+            if (!lastAnswers.Answers.Any(ai => !ai.IsCorrect))
+            {
+                await _userService.AddExperience(lastAnswers.CurrentPointsWeight, int.Parse(userId));
+            }
+
+            return lastAnswers;
         }
 
         private static List<AnswerVerifyOut> GetAnswerVerifyOuts(List<Answer> userAnswers)
