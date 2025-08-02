@@ -5,7 +5,7 @@ namespace Domain.DTOs
         public int LessonId { get; set; }
         public int QuestionId { get; set; }
         public required string UnityName { get; set; }
-        public int AlternativeId { get; set; }
+        public List<int> AlternativeIds { get; set; } = [];
     }
 
     public class AnswerVerifyOut

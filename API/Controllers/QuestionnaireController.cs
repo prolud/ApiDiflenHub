@@ -21,7 +21,7 @@ namespace API.Controllers
         [HttpPost("verify-answers")]
         public async Task<IActionResult> VerifyAnswers([FromBody] AnswerVerifyIn answerVerifyIn)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value!; 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value; 
             var result = await verifyAnswersUseCase.ExecuteAsync(answerVerifyIn, userId);
 
             if (result.IsSuccessStatusCode)
@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpGet("get-last-answers")]
         public async Task<IActionResult> GetAnswers([FromQuery] int lessonId, [FromQuery] string unityName)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = await getLastAnswersUseCase.ExecuteAsync(userId, lessonId, unityName);
 
             return Ok(result);
