@@ -24,5 +24,11 @@ namespace Infra.Repositories
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task InsertRangeAsync(List<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
     }
 }
