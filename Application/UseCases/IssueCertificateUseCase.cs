@@ -12,14 +12,14 @@ namespace Application.UseCases
         ICertificateRepository certificateRepository,
         IUnityRepository unityRepository)
     {
-        public async Task<UseCaseResult<string>> ExecuteAsync(string userId, string unityName)
+        public async Task<UseCaseResult> ExecuteAsync(string userId, string unityName)
         {
-            UseCaseResult<string> result;
-            
+            var result = new UseCaseResult();
+
             var unity = await unityRepository.GetAsync(u => u.Name == unityName);
             if (unity is null) return new()
             {
-                Message = "Unidade inválida",
+                Content = "Unidade inválida",
                 StatusCode = HttpStatusCode.BadRequest
             };
 
@@ -28,7 +28,7 @@ namespace Application.UseCases
                 return new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Message = "O Certificado já havia sido emitido."
+                    Content = "O Certificado já havia sido emitido."
                 };
             }
 
@@ -53,7 +53,7 @@ namespace Application.UseCases
                 result = new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Nem todas as questões foram respondidas corretamente.",
+                    Content = "Nem todas as questões foram respondidas corretamente.",
                 };
             }
 

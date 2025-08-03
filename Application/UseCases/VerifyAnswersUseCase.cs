@@ -8,7 +8,7 @@ namespace Application.UseCases
 {
     public class VerifyAnswersUseCase(IUnityRepository unityRepository, ILessonService lessonService, IAnswerService answerService, IQuestionService questionService, ICertificateService certificateService)
     {
-        public async Task<UseCaseResult<GetLastAnswersOut>> ExecuteAsync(AnswerVerifyIn answerVerifyIn, string userId)
+        public async Task<UseCaseResult> ExecuteAsync(AnswerVerifyIn answerVerifyIn, string userId)
         {
             var unity = await unityRepository.GetAsync(u => u.Name == answerVerifyIn.UnityName);
             if (unity is null)
@@ -16,7 +16,7 @@ namespace Application.UseCases
                 return new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Message = "O nome da unidade está incorreto."
+                    Content = "O nome da unidade está incorreto."
                 };
             }
 
@@ -26,7 +26,7 @@ namespace Application.UseCases
                 return new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Todas as questões já foram respondidas",
+                    Content = "Todas as questões já foram respondidas",
                 };
             }
 
@@ -36,7 +36,7 @@ namespace Application.UseCases
                 return new()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Não foi possível encontrar uma das alternativas de alguma questão",
+                    Content = "Não foi possível encontrar uma das alternativas de alguma questão",
                 };
             }
 

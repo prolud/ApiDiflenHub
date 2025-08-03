@@ -24,12 +24,7 @@ namespace API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = await verifyAnswersUseCase.ExecuteAsync(answerVerifyIn, userId);
 
-            if (result.IsSuccessStatusCode)
-            {
-                return StatusCode((int)result.StatusCode, result.Content);
-            }
-
-            return StatusCode((int)result.StatusCode, result.Message);
+            return StatusCode((int)result.StatusCode, result.Content);
         }
 
         [HttpGet("get-last-answers")]
@@ -38,12 +33,7 @@ namespace API.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = await getLastAnswersUseCase.ExecuteAsync(userId, lessonId, unityName);
 
-            if (result.IsSuccessStatusCode)
-            {
-                return StatusCode((int)result.StatusCode, result.Content);
-            }
-
-            return StatusCode((int)result.StatusCode, result.Message);
+            return StatusCode((int)result.StatusCode, result.Content);
         }
     }
 }

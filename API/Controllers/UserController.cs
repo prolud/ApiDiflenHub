@@ -8,7 +8,7 @@ namespace API.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class UsersController(IUserRepository userRepository, LoginUseCase loginUseCase, UserUseCase _useCase) : ControllerBase
+    public class UsersController(IUserRepository userRepository, LoginUseCase loginUseCase, RegisterUseCase _useCase) : ControllerBase
     {
         /// <summary>
         /// Register
@@ -18,8 +18,9 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDtoIn registerDto)
         {
-            await _useCase.RegisterUser(registerDto.Email, registerDto.Username, registerDto.Password);
-            return Ok("User created successfully!");
+            var result = await _useCase.ExecuteAsync(registerDto.Email, registerDto.Username, registerDto.Password);
+            return StatusCode((int)result.StatusCode, result.Content);
+
         }
 
         /// <summary>
@@ -41,14 +42,13 @@ namespace API.Controllers
 
             if (user is null) return NoContent();
 
-            return Ok(
-                new ProfileDtoOut
-                {
-                    Id = user.Id,
-                    Experience = user.Experience,
-                    Username = user.Username,
-                    ProfilePic = $"data:{user.FileType};base64,{System.Text.Encoding.UTF8.GetString(user.ProfilePicture)}",
-                });
+            return Ok(new ProfileDtoOut
+            {
+                Id = user.Id,
+                Experience = user.Experience,
+                Username = user.Username,
+                ProfilePic = $"data:{user.FileType};base64,{System.Text.Encoding.UTF8.GetString(user.ProfilePicture)}",
+            });
         }
     }
 }

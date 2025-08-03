@@ -8,7 +8,7 @@ namespace Application.UseCases
 {
     public class GetLessonUseCase(IUnityRepository unityRepository, ILessonRepository lessonRepository, ILessonService lessonService)
     {
-        public async Task<UseCaseResult<LessonDtoOut?>> GetLesson(string unityName, int lessonId, string userId)
+        public async Task<UseCaseResult> ExecuteAsync(string unityName, int lessonId, string userId)
         {
             var unity = await unityRepository.GetAsync(u => u.Name == unityName);
             if (unity is null) return new()
@@ -40,7 +40,7 @@ namespace Application.UseCases
 
             return new()
             {
-                Content = new()
+                Content = new LessonDtoOut()
                 {
                     Id = lessonFromDb.Id,
                     Description = lessonFromDb.Description,

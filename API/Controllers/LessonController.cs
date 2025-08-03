@@ -28,7 +28,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetLesson([FromQuery] string unityName, [FromQuery] int lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            var result = await getLessonUseCase.GetLesson(unityName, lessonId, userId);
+            var result = await getLessonUseCase.ExecuteAsync(unityName, lessonId, userId);
 
             return StatusCode((int)result.StatusCode, result.Content);
         }

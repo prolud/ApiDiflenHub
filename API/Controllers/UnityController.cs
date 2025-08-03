@@ -28,10 +28,7 @@ public class UnityController(IUnityRepository unityRepository) : ControllerBase
     {
         var unity = await unityRepository.GetAsync(u => u.Name == unityName);
 
-        if (unity is null)
-        {
-            return NoContent();
-        }
+        if (unity is null) return NoContent();
 
         return Ok(unity);
     }

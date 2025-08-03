@@ -2,8 +2,10 @@ using System.Text;
 using API.Middlewares;
 using Application.Auth;
 using Application.UseCases;
+using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Infra;
+using Infra.Repositories;
 using Infra.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -41,20 +43,32 @@ namespace API
         {
             services.AddScoped<AppDbContext>();
 
+            // repositories
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IAnswerRepository>();
+            services.AddScoped<ICertificateRepository>();
+            services.AddScoped<ILessonRepository>();
+            services.AddScoped<IQuestionRepository>();
+            services.AddScoped<IUnityRepository>();
+            services.AddScoped<IUserRepository>();
+
+            // services
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUnityService, UnityService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IAlternativeService, AlternativeService>();
             services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IQuestionService, QuestionService>();
-
-            services.AddScoped<QuestionnaireUseCase>();
-            services.AddScoped<UserUseCase>();
-            services.AddScoped<UnityUseCase>();
-            services.AddScoped<LessonUseCase>();
-
             services.AddScoped<JwtService>();
+
+            // usecases
+            services.AddScoped<GetLastAnswersUseCase>();
+            services.AddScoped<GetLessonsUseCase>();
+            services.AddScoped<GetLessonUseCase>();
+            services.AddScoped<IssueCertificateUseCase>();
+            services.AddScoped<LoginUseCase>();
+            services.AddScoped<RegisterUseCase>();
+            services.AddScoped<VerifyAnswersUseCase>();
         }
 
         internal static void ConfigureSwagger(IServiceCollection services)
@@ -67,7 +81,7 @@ namespace API
         internal static void ConfigureJwt(IServiceCollection services, ConfigurationManager configuration)
         {
             var key = configuration["JwtConfig:Key"] ?? throw new KeyNotFoundException("The environment was not prepared to set key");
-            
+
             services
             .AddAuthentication(o =>
             {
