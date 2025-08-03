@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
-using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
