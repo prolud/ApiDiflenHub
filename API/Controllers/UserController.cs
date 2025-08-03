@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Application.UseCases;
 using Domain.DTOs;
+using Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class UsersController(UserUseCase _useCase) : ControllerBase
+    public class UsersController(IUserRepository userRepository, LoginUseCase loginUseCase, UserUseCase _useCase) : ControllerBase
     {
         /// <summary>
         /// Register
@@ -29,36 +30,25 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDtoIn loginDto)
         {
-            var result = await _useCase.LoginUser(loginDto.Email, loginDto.Password);
-
-            if (result is null)
-            {
-                return BadRequest(new
-                {
-                    HttpStatusCode.BadRequest,
-                    Message = "Usuário não encontrado",
-                });
-            }
-            else if (!result.IsLogged)
-            {
-                return Unauthorized(new
-                {
-                    HttpStatusCode.Unauthorized,
-                    Message = "Senha incorreta",
-                });
-            }
-
-            return Ok(result);
+            var result = await loginUseCase.ExecuteAsync(loginDto.Email, loginDto.Password);
+            return StatusCode((int)result.StatusCode, result.Content);
         }
 
         [HttpGet("profile")]
         public async Task<IActionResult> Profile([FromQuery] string username)
         {
-            var profile = await _useCase.GetProfileAsync(username);
+            var user = await userRepository.GetAsync(u => u.Username == username);
 
-            if (profile is null) return NoContent();
+            if (user is null) return NoContent();
 
-            return Ok(profile);
+            return Ok(
+                new ProfileDtoOut
+                {
+                    Id = user.Id,
+                    Experience = user.Experience,
+                    Username = user.Username,
+                    ProfilePic = $"data:{user.FileType};base64,{System.Text.Encoding.UTF8.GetString(user.ProfilePicture)}",
+                });
         }
     }
 }
