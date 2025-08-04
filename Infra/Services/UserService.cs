@@ -1,8 +1,4 @@
-using System.Formats.Asn1;
-using Domain.Enums;
-using Domain.Interfaces;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces.Services;
 
 namespace Infra.Services
 {
@@ -14,25 +10,6 @@ namespace Infra.Services
             user.Experience += experienceToAdd;
 
             _context.Update(user);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<User?> GetUserAsync(string queryParam, QueryParam queryParamEnum)
-        {
-            switch (queryParamEnum)
-            {
-                case QueryParam.Email:
-                    return await _context.Users.FirstOrDefaultAsync(user => user.Email == queryParam);
-                case QueryParam.UserName:
-                    return await _context.Users.FirstOrDefaultAsync(user => user.Username == queryParam);
-                default:
-                    return null;
-            }
-        }
-
-        public async Task InsertUser(User user)
-        {
-            _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
     }

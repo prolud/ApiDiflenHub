@@ -3,8 +3,13 @@ namespace Domain.DTOs
     public class AnswerVerifyIn
     {
         public int LessonId { get; set; }
-        public int QuestionId { get; set; }
         public required string UnityName { get; set; }
+        public List<AlternativeDtoIn> Answers { get; set; } = [];
+    }
+
+    public class AlternativeDtoIn
+    {
+        public int QuestionId { get; set; }
         public int AlternativeId { get; set; }
     }
 
