@@ -19,16 +19,19 @@ namespace Application.UseCases
 
             var dblessons = await lessonRepository.GetListAsync(l => l.UnityId == unity.Id);
 
-            var lessons = await Task.WhenAll(
-                dblessons.Select(async lesson => new LessonDtoOut
+            var lessons = new List<LessonDtoOut>();
+
+            foreach (var lesson in dblessons)
+            {
+                lessons.Add(new LessonDtoOut
                 {
                     Id = lesson.Id,
                     Title = lesson.Title,
                     Description = lesson.Description,
                     VideoUrl = lesson.VideoUrl,
                     Concluded = await lessonService.LessonAreAlreadyAnswered(userId, lesson.Id),
-                })
-                .ToList());
+                });
+            }
 
             return new()
             {

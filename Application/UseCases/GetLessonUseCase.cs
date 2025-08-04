@@ -16,7 +16,7 @@ namespace Application.UseCases
                 StatusCode = HttpStatusCode.NoContent
             };
 
-            var lessonFromDb = await lessonRepository.GetAsync(l => l.Id == lessonId);
+            var lessonFromDb = await lessonRepository.GetLesson(lessonId);
             if (lessonFromDb is null) return new()
             {
                 StatusCode = HttpStatusCode.NoContent

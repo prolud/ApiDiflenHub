@@ -35,19 +35,19 @@ namespace Infra.Services
         {
             var answersToInsert = new List<Answer>();
 
-            foreach (var alternativeId in answerVerifyIn.AlternativeIds)
+            foreach (var answer in answerVerifyIn.Answers)
             {
-                var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answerVerifyIn.QuestionId);
+                var correctAlternative = await _alternativeService.GetCorrectAlternativeAsync(answer.QuestionId);
                 if (correctAlternative is null) return null;
 
                 answersToInsert.Add(new Answer
                 {
-                    AlternativeId = alternativeId,
+                    AlternativeId = answer.AlternativeId,
                     UserId = int.Parse(userId),
-                    QuestionId = correctAlternative.Question.Id,
-                    LessonId = correctAlternative.Question.LessonId,
+                    QuestionId = answer.QuestionId,
+                    LessonId = answerVerifyIn.LessonId,
                     UnityId = unityId,
-                    IsCorrect = alternativeId == correctAlternative.Id,
+                    IsCorrect = answer.AlternativeId == correctAlternative.Id,
                     Created = DateTime.Now,
                 });
             }
