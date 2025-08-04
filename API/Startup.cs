@@ -45,12 +45,12 @@ namespace API
 
             // repositories
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IAnswerRepository>();
-            services.AddScoped<ICertificateRepository>();
-            services.AddScoped<ILessonRepository>();
-            services.AddScoped<IQuestionRepository>();
-            services.AddScoped<IUnityRepository>();
-            services.AddScoped<IUserRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<ICertificateRepository, CertificateRepository>();
+            services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IUnityRepository, UnityRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // services
             services.AddScoped<IUserService, UserService>();
