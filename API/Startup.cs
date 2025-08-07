@@ -62,13 +62,13 @@ namespace API
             services.AddScoped<JwtService>();
 
             // usecases
-            services.AddScoped<GetLastAnswersUseCase>();
             services.AddScoped<GetLessonsUseCase>();
             services.AddScoped<GetLessonUseCase>();
             services.AddScoped<IssueCertificateUseCase>();
             services.AddScoped<LoginUseCase>();
             services.AddScoped<RegisterUseCase>();
             services.AddScoped<VerifyAnswersUseCase>();
+            services.AddScoped<GetUnityUseCase>();
         }
 
         internal static void ConfigureSwagger(IServiceCollection services)

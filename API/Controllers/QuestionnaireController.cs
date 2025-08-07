@@ -9,7 +9,7 @@ namespace API.Controllers
     [Route("api/questionnaire")]
     [ApiController]
     [Authorize]
-    public class QuestionnaireController(VerifyAnswersUseCase verifyAnswersUseCase, GetLastAnswersUseCase getLastAnswersUseCase) : ControllerBase
+    public class QuestionnaireController(VerifyAnswersUseCase verifyAnswersUseCase) : ControllerBase
     {
         /// <summary>
         /// Veryfy answers
@@ -23,15 +23,6 @@ namespace API.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var result = await verifyAnswersUseCase.ExecuteAsync(answerVerifyIn, userId);
-
-            return StatusCode((int)result.StatusCode, result.Content);
-        }
-
-        [HttpGet("get-last-answers")]
-        public async Task<IActionResult> GetAnswers([FromQuery] int lessonId, [FromQuery] string unityName)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var result = await getLastAnswersUseCase.ExecuteAsync(userId, lessonId, unityName);
 
             return StatusCode((int)result.StatusCode, result.Content);
         }

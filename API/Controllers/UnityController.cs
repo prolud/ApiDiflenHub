@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Application.UseCases;
 using Domain.DTOs;
 using Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +10,7 @@ namespace API.Controllers;
 [Route("api/unity")]
 [ApiController]
 [Authorize]
-public class UnityController(IUnityRepository unityRepository) : ControllerBase
+public class UnityController(IUnityRepository unityRepository, GetUnityUseCase getUnityUseCase) : ControllerBase
 {
     [HttpGet("get-all")]
     public async Task<IActionResult> GetAllUnities()
@@ -25,10 +27,8 @@ public class UnityController(IUnityRepository unityRepository) : ControllerBase
     [HttpGet("get-from-name")]
     public async Task<IActionResult> GetUnity([FromQuery] string unityName)
     {
-        var unity = await unityRepository.GetAsync(u => u.Name == unityName);
-
-        if (unity is null) return NoContent();
-
-        return Ok(unity);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        var result = await getUnityUseCase.ExecuteAsync(unityName, userId);
+        return StatusCode((int)result.StatusCode, result.Content);
     }
 }

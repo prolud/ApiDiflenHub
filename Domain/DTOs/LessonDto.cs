@@ -7,5 +7,6 @@ public class LessonDtoOut
     public string? Description { get; set; }
     public string? VideoUrl { get; set; }
     public bool Concluded { get; set; }
+    public GetLastAnswersOut GetLastAnswersOut { get; set; } = new();
     public ICollection<QuestionDtoOut> Questions { get; set; } = [];
 }
