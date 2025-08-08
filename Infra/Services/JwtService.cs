@@ -1,13 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Interfaces.Services;
 using Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Application.Auth
+namespace Infra.Services
 {
-    public class JwtService(IConfiguration _configuration)
+    public class JwtService(IConfiguration _configuration) : IJwtService
     {
         public string GenerateBearerToken(User user)
         {

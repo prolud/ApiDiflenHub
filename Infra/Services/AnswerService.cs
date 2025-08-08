@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Services
 {
-    public class AnswerService(AppDbContext _context, IAlternativeService _alternativeService, IAnswerRepository unityRepository, IUserService _userService) : IAnswerService
+    public class AnswerService(AppDbContext _context, IAlternativeService _alternativeService, IAnswerRepository unityRepository, IUserRepository _userRepository) : IAnswerService
     {
         const int DEFAULT_POINTS = 300;
 
@@ -58,7 +58,7 @@ namespace Infra.Services
 
             if (!lastAnswers.Answers.Any(ai => !ai.IsCorrect))
             {
-                await _userService.AddExperience(lastAnswers.CurrentPointsWeight, int.Parse(userId));
+                await _userRepository.AddExperience(lastAnswers.CurrentPointsWeight, int.Parse(userId));
             }
 
             return lastAnswers;

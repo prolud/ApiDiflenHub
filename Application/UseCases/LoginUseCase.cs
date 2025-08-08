@@ -1,12 +1,12 @@
 using System.Net;
-using Application.Auth;
 using Application.UseCases.Common;
 using Domain.DTOs;
 using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 
 namespace Application.UseCases
 {
-    public class LoginUseCase(IUserRepository userRepository, JwtService jwtService)
+    public class LoginUseCase(IUserRepository userRepository, IJwtService jwtService)
     {
         public async Task<UseCaseResult> ExecuteAsync(string email, string password)
         {

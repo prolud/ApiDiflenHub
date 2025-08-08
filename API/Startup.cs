@@ -1,6 +1,5 @@
 using System.Text;
 using API.Middlewares;
-using Application.Auth;
 using Application.UseCases;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
@@ -53,13 +52,12 @@ namespace API
             services.AddScoped<IUserRepository, UserRepository>();
 
             // services
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IAlternativeService, AlternativeService>();
             services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<JwtService>();
+            services.AddScoped<IJwtService, JwtService>();
 
             // usecases
             services.AddScoped<GetLessonsUseCase>();
