@@ -17,5 +17,9 @@ namespace Domain.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        public Unity Unity { get; set; } = null!;
+
+        public User User { get; set; } = null!;
     }
 }
